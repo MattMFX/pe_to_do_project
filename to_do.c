@@ -10,6 +10,10 @@ struct to_do_list{
     char *categoria;
 };
 
+void main(){
+	printf("teste");
+}
+
 //void salva_tarefa(struct to_do_list *lista)
 
 //void exclui_tarefa(id ou titulo)
