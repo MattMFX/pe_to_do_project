@@ -3,12 +3,16 @@
 #include <time.h>
 
 struct to_do_list{
-    //long id ou char *titulo;
+    long id;
     char *descricao;
     struct tm *data;
     enum prioridade {Urgente=1, Alta_prioridade=2, Normal=3, Baixa_prioridade=4} prioridade;
     char *categoria;
 };
+
+void exclui_tarefa(long id){
+
+}
 
 void salva_tarefa(struct to_do_list *lista){
     FILE *bin_ptr = fopen("tarefas.bin", "ab");
@@ -19,16 +23,10 @@ void salva_tarefa(struct to_do_list *lista){
 }
 
 void main(){
-    struct to_do_list tarefas;
-    tarefas.descricao = "banana";
+    struct to_do_list *tarefas;
 
-    salva_tarefa(&tarefas);
-    system("ls");
 }
 
-
-
-//void exclui_tarefa(id ou titulo)
 
 //struct to_do_list *lista cria_tarefa(void)
 
