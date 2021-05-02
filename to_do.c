@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 struct tarefa{
@@ -20,19 +21,17 @@ void edita_tarefa(long id){
 
 }
 
-void salva_tarefa(struct tarefa *lista){
-    printf("%s", lista->descricao);
-
-    FILE *bin_ptr = fopen("tarefas.bin", "ab+");
-
-    struct tarefa *tar = (struct tarefa *) malloc(8);
-
-    fwrite(lista, 8, 1, bin_ptr);
-    fread(tar, 8, 1, bin_ptr);
-
-    printf("%s", tar->descricao);
-
-    fclose(bin_ptr);
+void salva_tarefa(struct tarefa *tarefa){
+    FILE *bin_ptr = NULL;
+    bin_ptr = fopen("tarefas.bin", "ab");
+    if(bin_ptr == NULL){
+        printf("Erro ao salvar as mudanÃ§as, tente novamente");
+    }else{
+        int tamanho_arquivo = ftell(bin_ptr);
+        tarefa->id = tamanho_arquivo/120;
+        fwrite(tarefa, sizeof(*tarefa), 1, bin_ptr); 
+        fclose(bin_ptr);
+    }
 }
 
 void cria_tarefa(){
@@ -52,7 +51,7 @@ void cria_tarefa(){
     printf("Digite a descricao de seu compromisso:\n ");
     scanf("%s ", descricao_local);
 
-    printf("Digite o número relacionado a prioridade de seu compromisso(Urgente=1, Alta_prioridade=2, Normal=3, Baixa_prioridade=4):\n");
+    printf("Digite o nï¿½mero relacionado a prioridade de seu compromisso(Urgente=1, Alta_prioridade=2, Normal=3, Baixa_prioridade=4):\n");
     scanf("%d ", prioridade_local);
 
     printf("Digite a data do compromisso com o seguinte formato: dd/mm/aaaa\n");
@@ -75,10 +74,10 @@ void consulta_tarefas(){
     FILE *bin_ptr = fopen("tarefas.bin", "rb");
     char indicador;
 
-    /* Se o fopen retornar nulo, o arquivo não existe */
+    /* Se o fopen retornar nulo, o arquivo nï¿½o existe */
 
     if(bin_prt == NULL){
-        printf("Erro ao abrir, o arquivo binário está vazio!!\n");
+        printf("Erro ao abrir, o arquivo binï¿½rio estï¿½ vazio!!\n");
         exit(1);
     }
 
@@ -91,23 +90,16 @@ void consulta_tarefas(){
 }
 
 void main(){
-    /*struct tarefa *tarefas1 = (struct tarefa *) malloc(8);
-    struct tarefa *tarefas2 = (struct tarefa *) malloc(8);
-    struct tarefa *tarefas3 = (struct tarefa *) malloc(8);
-    struct tarefa *tarefas4 = (struct tarefa *) malloc(8);
+    struct tarefa tarefas1;
 
-    tarefas1->descricao = "tarefa";
-    tarefas2->descricao = "tarefa";
-    tarefas3->descricao = "tarefa";
-    tarefas4->descricao = "tarefa";
+    strcpy(tarefas1.descricao, "tarefa");
+    tarefas1.prioridade = 2;
+    strcpy(tarefas1.categoria, "cat1");
 
-    salva_tarefa(tarefas1);
-    salva_tarefa(tarefas2);
-    salva_tarefa(tarefas3);
-    salva_tarefa(tarefas4);*/
+    salva_tarefa(&tarefas1);
 }
 
 
-//struct tarefa *lista cria_tarefa(void)
+//struct tarefa *tarefa cria_tarefa(void)
 
 
