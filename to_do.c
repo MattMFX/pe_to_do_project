@@ -9,9 +9,11 @@ struct tarefa{
     int dia;
     int mes;
     int ano;
-    enum prioridade {Urgente=1, Alta_prioridade=2, Normal=3, Baixa_prioridade=4} prioridade;
+    int prioridade;
     char categoria[50];
 };
+
+/*---------------------------------------- I/O Binário ----------------------------------------*/
 
 void exclui_tarefa(long id){
 
@@ -24,57 +26,70 @@ void edita_tarefa(long id){
 void salva_tarefa(struct tarefa *tarefa){
     FILE *bin_ptr = NULL;
     bin_ptr = fopen("tarefas.bin", "ab");
+
     if(bin_ptr == NULL){
         printf("Erro ao salvar as mudanças, tente novamente");
     }else{
         int tamanho_arquivo = ftell(bin_ptr);
-        tarefa->id = tamanho_arquivo/120;
+        tarefa->id = tamanho_arquivo/128;
         fwrite(tarefa, sizeof(*tarefa), 1, bin_ptr); 
         fclose(bin_ptr);
     }
 }
 
-void cria_tarefa(){
 
-    struct tarefa *tarefa_local = (struct tarefa *) malloc(sizeof (struct tarefa));
-    char descricao_local[50];
-    enum prioridade_local {Urgente=1, Alta_prioridade=2, Normal=3, Baixa_prioridade=4} prioridade_local;
-    char categoria_local [50];
-    char *data = (char *)malloc (20);
-    int dia_local=0;
-    int mes_local=0;
-    int ano_local=0;
+
+/*---------------------------------------------------------------------------------------------*/
+
+
+/*---------------------------------------- I/O Usuário ----------------------------------------*/
+
+
+struct tarefa * cria_tarefa(){
+    struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(*tarefa));
 
     printf("Digite a categoria de seu compromisso:\n ");
-    scanf("%s ", categoria_local);
+    scanf("%s", tarefa->categoria);
+;
+    printf("Digite a descrição de seu compromisso:\n ");
+    scanf("%s", tarefa->descricao);
 
-    printf("Digite a descricao de seu compromisso:\n ");
-    scanf("%s ", descricao_local);
-
-    printf("Digite o n�mero relacionado a prioridade de seu compromisso(Urgente=1, Alta_prioridade=2, Normal=3, Baixa_prioridade=4):\n");
-    scanf("%d ", prioridade_local);
+    do{
+        printf("Digite um número de 1 a 5 relacionado a prioridade(1 --> Urgente / 5 --> Baixa Importância)\n");
+        scanf("%d", &tarefa->prioridade);
+    }while(tarefa->prioridade<1 || tarefa->prioridade>5);
 
     printf("Digite a data do compromisso com o seguinte formato: dd/mm/aaaa\n");
+    char data[11];
     scanf("%s", data);
+    tarefa->dia = atoi(data);
+    tarefa->mes = atoi(data+3);
+    tarefa->ano = atoi(data+6);
 
-    dia_local = atoi(data);
-    mes_local = atoi(data+3);
-    ano_local = atoi(data+6);
-
-    tarafas1->categoria = categoria_local;
-    tarafas1->descricao = descricao_local;
-    tarafas1->prioridade = prioridade_local;
-    tarafas1->dia = dia_local;
-    tarafas1->mas = mes_local;
-    tarafas1->ano = ano_local;
+    return tarefa;
 }
 
-void consulta_tarefas(){
+/*--------------------------------------------------------------------------------------------*/
 
+
+
+/*---------------------------------------- Ordenações ----------------------------------------*/
+
+
+
+
+
+/*--------------------------------------------------------------------------------------------*/
+
+
+/*---------------------------------------- Consultas -----------------------------------------*/
+
+void consulta_tarefas(){
+/*
     FILE *bin_ptr = fopen("tarefas.bin", "rb");
     char indicador;
 
-    /* Se o fopen retornar nulo, o arquivo n�o existe */
+    //Se o fopen retornar nulo, o arquivo n�o existe
 
     if(bin_prt == NULL){
         printf("Erro ao abrir, o arquivo bin�rio est� vazio!!\n");
@@ -87,16 +102,19 @@ void consulta_tarefas(){
 
 
     fclose(bin_ptr);
+*/
 }
 
+/*--------------------------------------------------------------------------------------------*/
+
 void main(){
-    struct tarefa tarefas1;
+    /*struct tarefa tarefas1;
 
     strcpy(tarefas1.descricao, "tarefa");
     tarefas1.prioridade = 2;
-    strcpy(tarefas1.categoria, "cat1");
-
-    salva_tarefa(&tarefas1);
+    strcpy(tarefas1.categoria, "cat1");*/
+    struct tarefa *tarefa = cria_tarefa();
+    salva_tarefa(tarefa);
 }
 
 
