@@ -55,7 +55,7 @@ struct tarefa * cria_tarefa(){
     scanf("%s", tarefa->descricao);
 
     do{
-        printf("Digite um número de 1 a 5 relacionado a prioridade(1 --> Urgente / 5 --> Baixa Importância)\n");
+        printf("Digite um número de 1 a 5 relacionado a prioridade (1 --> Urgente / 5 --> Baixa Importância)\n");
         scanf("%d", &tarefa->prioridade);
     }while(tarefa->prioridade<1 || tarefa->prioridade>5);
 
@@ -85,36 +85,37 @@ struct tarefa * cria_tarefa(){
 /*---------------------------------------- Consultas -----------------------------------------*/
 
 void consulta_tarefas(){
-/*
+
     FILE *bin_ptr = fopen("tarefas.bin", "rb");
+    struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(struct tarefa));
     char indicador;
 
-    //Se o fopen retornar nulo, o arquivo n�o existe
+    //Se o fopen retornar nulo, o arquivo não existe
 
-    if(bin_prt == NULL){
-        printf("Erro ao abrir, o arquivo bin�rio est� vazio!!\n");
+    if(bin_ptr == NULL){
+        printf("Erro ao abrir, o arquivo binário está vazio!!\n");
         exit(1);
     }
 
-    while((indicador = fgetc(bin_ptr)) != EOF){
+    printf("%-50s%-50s%-50s%-12s\n", "Categoria", "Descrição", " Prioridade", "  Data");
+    printf("---------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
+    while(fread(tarefa, sizeof(*tarefa), 1, bin_ptr) != 0){
+        printf("%-50s", tarefa->categoria);
+        printf("%-50s", tarefa->descricao);
+        printf("%-50d", tarefa->prioridade);
+        printf("%d/%d/%d\n", tarefa->dia, tarefa->mes, tarefa->ano);
     }
 
-
     fclose(bin_ptr);
-*/
 }
 
 /*--------------------------------------------------------------------------------------------*/
 
 void main(){
-    /*struct tarefa tarefas1;
-
-    strcpy(tarefas1.descricao, "tarefa");
-    tarefas1.prioridade = 2;
-    strcpy(tarefas1.categoria, "cat1");*/
-    struct tarefa *tarefa = cria_tarefa();
-    salva_tarefa(tarefa);
+    /*struct tarefa *tarefa = cria_tarefa();
+    salva_tarefa(tarefa);*/
+    consulta_tarefas();
 }
 
 
