@@ -47,52 +47,52 @@ void salva_tarefa(struct tarefa *tarefa){
 
 struct tarefa * cria_tarefa(){
     struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(*tarefa));
-    char buffer[50];
+    char buffer[100];
     int ind;
+
 //Recebe Categoria
-    printf("Digite a categoria de seu compromisso:\n ");
+    printf("Digite a categoria de seu compromisso:\n");
     scanf("%s", tarefa->categoria);
+    fflush(stdin);
 
 //Recebe Descrição
-    printf("Digite a descrição de seu compromisso:\n ");
+    printf("Digite a descrição de seu compromisso:\n");
     scanf("%s", tarefa->descricao);
+    fflush(stdin);
 
 //Recebe Prioridade
     printf("Digite um número de 1 a 5 relacionado a prioridade (1 --> Urgente / 5 --> Baixa Importância)\n");
-    char * entrada = gets(buffer);
+    scanf("%s", buffer);
     fflush(stdin);
-    int ind = valida_inteiro(entrada);
-    tarefa->prioridade=0;
+    tarefa->prioridade = atoi(buffer);
 
-    if (ind==NULL || (tarefa->prioridade<1 || tarefa->prioridade>5)){
+    if (tarefa->prioridade<1 || tarefa->prioridade>5){
         do{
-            printf("Erro! Sua entrada não é válida para essa categoria! :(\nVocê deve digitar um número de 1 a 5! :)\n");
-            entrada = gets(buffer);
+            printf("PUTS! Parece que sua entrada não é válida para essa categoria! :(\nVocê deve digitar um número de 1 a 5! :)\n");
+            scanf("%s", buffer);
             fflush(stdin);
             tarefa->prioridade = atoi(buffer);
-            ind = valida_inteiro(entrada);
-        }while (ind==NULL || (tarefa->prioridade<1 || tarefa->prioridade>5));
+        }while (tarefa->prioridade<1 || tarefa->prioridade>5);
     }
 
 //Recebe Data
     printf("Digite a data do compromisso com o seguinte formato: dd/mm/aaaa\n");
-    entrada = gets(buffer);
+    scanf("%s", buffer);
     fflush(stdin);
-    int ind = valida_inteiro(entrada);
-    tarefa->dia = 0;
-    tarefa->mes = 0;
-    tarefa->ano = 0;
+    tarefa->dia = atoi(buffer);
+    tarefa->mes = atoi(buffer+3);
+    tarefa->ano = atoi(buffer+6);
 
-    if (ind==NULL || (tarefa->prioridade<1 || tarefa->prioridade>5)){
+    if ( (tarefa->dia<1 || tarefa->dia>31)  || (tarefa->mes<1 || tarefa->mes>12)  || (tarefa->ano<1) ){
         do{
-            printf("Erro! Sua entrada não é válida para essa categoria! :(\nVocê deve digitar uma data existente com o seguinte formato: dd/mm/aaaa! :)\n");
-            entrada = gets(buffer);
+            printf("PUTS! Parece que sua entrada não é válida para essa categoria! :(\nVocê deve digitar uma data existente com o seguinte formato: dd/mm/aaaa! :)\n");
+            scanf("%s", buffer);
             fflush(stdin);
             tarefa->dia = atoi(buffer);
             tarefa->mes = atoi(buffer+3);
             tarefa->ano = atoi(buffer+6);
-            ind = valida_inteiro(entrada);
-        }while (ind==NULL || (tarefa->dia<1 || tarefa->dia>31) || (tarefa->mes<1 || tarefa->mes>12) || (tarefa->ano<1));
+
+        }while ( (tarefa->dia<1 || tarefa->dia>31)  || (tarefa->mes<1 || tarefa->mes>12)  || (tarefa->ano<1) );
     }
 
     return tarefa;
@@ -163,7 +163,8 @@ void consulta_tarefas(){
 void main(){
     //struct tarefa *tarefa = cria_tarefa();
     //salva_tarefa(tarefa);
-    consulta_tarefas();
+    //consulta_tarefas();
+    //cria_tarefa();
 }
 
 
