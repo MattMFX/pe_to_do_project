@@ -50,6 +50,8 @@ void salva_tarefa(struct tarefa *tarefa){
         fwrite(tarefa, sizeof(*tarefa), 1, bin_ptr);
         fclose(bin_ptr);
     }
+
+    free(tarefa);
 }
 /*---------------------------------------------------------------------------------------------*/
 
@@ -74,6 +76,9 @@ int valida_inteiro(char *entrada){
             retorno = 1;
         }
     }
+
+    free(entrada);
+
     return retorno;
 }
 /*---------------------------------------------------------------------------------------------*/
@@ -228,6 +233,7 @@ void main(){
         if(input==1){
             struct tarefa *tarefa = cria_tarefa();
             salva_tarefa(tarefa);
+            free(tarefa);
         }else if(input==2){
             edita_tarefa();
         }else if(input==3){
