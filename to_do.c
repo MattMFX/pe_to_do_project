@@ -5,12 +5,12 @@
 
 struct tarefa{
     long id;
-    char descricao[50];
+    char descricao[200];
     int dia;
     int mes;
     int ano;
     int prioridade;
-    char categoria[50];
+    char categoria[200];
 };
 
 /*---------------------------------------- I/O Bin�rio ----------------------------------------*/
@@ -50,11 +50,31 @@ struct tarefa * cria_tarefa(){
     char buffer[100];
     int ind;
 
-    printf("Digite a categoria de seu compromisso:\n");
-    fgets(tarefa->categoria, 50, stdin);
+    printf("Digite a categoria de seu compromisso (apenas os 200 primeiros caracteres serão salvos):\n");
+    fgets(tarefa->categoria, 1000, stdin);
+    fflush(stdin);
+
+    if(strlen(tarefa->categoria) > 200){
+        do{
+            printf("PUTS! Você gosta de escrever, hein... sua categoria deve ser menor!:\nDigite uma nova categoria:\n");
+            fgets(tarefa->categoria, 600, stdin);
+            fflush(stdin);
+        }while(strlen(tarefa->categoria) > 200);
+    }
+
 
     printf("Digite a descrição de seu compromisso:\n");
-    fgets(tarefa->descricao, 50, stdin);
+    fgets(tarefa->descricao, 1000, stdin);
+    fflush(stdin);
+
+   if(strlen(tarefa->descricao) > 200){
+        do{
+            printf("PUTS! Você gosta de escrever, hein... sua descrição deve ser menor!:\nDigite uma nova descrição:\n");
+            fgets(tarefa->descricao, 1000, stdin);
+            fflush(stdin);
+        }while(strlen(tarefa->descricao) > 200);
+    }
+
 
     printf("Digite um número de 1 a 5 relacionado a prioridade (1 --> Urgente / 5 --> Baixa Import�ncia)\n");
     char *entrada = gets(buffer);
@@ -75,6 +95,7 @@ struct tarefa * cria_tarefa(){
 //Recebe Data
     printf("Digite a data do compromisso com o seguinte formato: dd/mm/aaaa\n");
     scanf("%s", buffer);
+    fflush(stdin);
 
     tarefa->dia = atoi(buffer);
     tarefa->mes = atoi(buffer+3);
@@ -84,6 +105,7 @@ struct tarefa * cria_tarefa(){
         do{
             printf("PUTS! Parece que sua entrada não é válida para essa categoria! :(\nVocê deve digitar uma data existente com o seguinte formato: dd/mm/aaaa! :)\n");
             scanf("%s", buffer);
+            fflush(stdin);
             tarefa->dia = atoi(buffer);
             tarefa->mes = atoi(buffer+3);
             tarefa->ano = atoi(buffer+6);
