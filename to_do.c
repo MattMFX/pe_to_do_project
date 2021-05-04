@@ -13,7 +13,7 @@ struct tarefa{
     char categoria[50];
 };
 
-/*---------------------------------------- I/O BinÃ¡rio ----------------------------------------*/
+/*---------------------------------------- I/O Binário ----------------------------------------*/
 
 void exclui_tarefa(long id){
 
@@ -28,7 +28,7 @@ void salva_tarefa(struct tarefa *tarefa){
     bin_ptr = fopen("tarefas.bin", "ab");
 
     if(bin_ptr == NULL){
-        printf("Erro ao salvar as mudanÃ§as, tente novamente");
+        printf("Erro ao salvar as mudanças, tente novamente");
     }else{
         int tamanho_arquivo = ftell(bin_ptr);
         tarefa->id = tamanho_arquivo/128;
@@ -42,7 +42,7 @@ void salva_tarefa(struct tarefa *tarefa){
 /*---------------------------------------------------------------------------------------------*/
 
 
-/*---------------------------------------- I/O UsuÃ¡rio ----------------------------------------*/
+/*---------------------------------------- I/O Usuário ----------------------------------------*/
 
 
 struct tarefa * cria_tarefa(){
@@ -55,37 +55,40 @@ struct tarefa * cria_tarefa(){
     scanf("%s", tarefa->categoria);
     fflush(stdin);
 
-//Recebe DescriÃ§Ã£o
-    printf("Digite a descriÃ§Ã£o de seu compromisso:\n");
+//Recebe Descrição
+    printf("Digite a descrição de seu compromisso:\n");
     scanf("%s", tarefa->descricao);
     fflush(stdin);
 
 //Recebe Prioridade
-    printf("Digite um nÃºmero de 1 a 5 relacionado a prioridade (1 --> Urgente / 5 --> Baixa ImportÃ¢ncia)\n");
-    scanf("%s", buffer);
+    printf("Digite um número de 1 a 5 relacionado a prioridade (1 --> Urgente / 5 --> Baixa Importância)\n");
+    char *entrada = gets(buffer);
     fflush(stdin);
+    ind = valida_inteiro(entrada);
     tarefa->prioridade = atoi(buffer);
 
-    if (tarefa->prioridade<1 || tarefa->prioridade>5){
+    if ((ind == NULL)||(tarefa->prioridade<1 || tarefa->prioridade>5)){
         do{
-            printf("PUTS! Parece que sua entrada nÃ£o Ã© vÃ¡lida para essa categoria! :(\nVocÃª deve digitar um nÃºmero de 1 a 5! :)\n");
-            scanf("%s", buffer);
+            printf("PUTS! Parece que sua entrada não é válida para essa categoria! :(\nVocê deve digitar um número de 1 a 5! :)\n");
+            entrada = gets(buffer);
             fflush(stdin);
+            ind = valida_inteiro(entrada);
             tarefa->prioridade = atoi(buffer);
-        }while (tarefa->prioridade<1 || tarefa->prioridade>5);
+        }while ((ind == NULL)||(tarefa->prioridade<1 || tarefa->prioridade>5));
     }
 
 //Recebe Data
     printf("Digite a data do compromisso com o seguinte formato: dd/mm/aaaa\n");
     scanf("%s", buffer);
     fflush(stdin);
+
     tarefa->dia = atoi(buffer);
     tarefa->mes = atoi(buffer+3);
     tarefa->ano = atoi(buffer+6);
 
     if ( (tarefa->dia<1 || tarefa->dia>31)  || (tarefa->mes<1 || tarefa->mes>12)  || (tarefa->ano<1) ){
         do{
-            printf("PUTS! Parece que sua entrada nÃ£o Ã© vÃ¡lida para essa categoria! :(\nVocÃª deve digitar uma data existente com o seguinte formato: dd/mm/aaaa! :)\n");
+            printf("PUTS! Parece que sua entrada não é válida para essa categoria! :(\nVocê deve digitar uma data existente com o seguinte formato: dd/mm/aaaa! :)\n");
             scanf("%s", buffer);
             fflush(stdin);
             tarefa->dia = atoi(buffer);
@@ -103,7 +106,7 @@ struct tarefa * cria_tarefa(){
 
 
 
-/*---------------------------------------- ValidaÃ§Ãµes ----------------------------------------*/
+/*---------------------------------------- Validações ----------------------------------------*/
 int valida_inteiro(char *entrada){
 
 int i;
@@ -120,7 +123,7 @@ for(i = 0; i < strlen(entrada); i++){
 
 
 
-/*---------------------------------------- OrdenaÃ§Ãµes ----------------------------------------*/
+/*---------------------------------------- Ordenações ----------------------------------------*/
 
 
 
@@ -137,14 +140,14 @@ void consulta_tarefas(){
     struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(struct tarefa));
     char indicador;
 
-    //Se o fopen retornar nulo, o arquivo nÃ£o existe
+    //Se o fopen retornar nulo, o arquivo não existe
 
     if(bin_ptr == NULL){
-        printf("Erro ao abrir, o arquivo binÃ¡rio estÃ¡ vazio!!\n");
+        printf("Erro ao abrir, o arquivo binário está vazio!!\n");
         exit(1);
     }
 
-    printf("         %-50s%-50s%-50s%-12s\n", "Categoria", "DescriÃ§Ã£o", " Prioridade", "  Data");
+    printf("         %-50s%-50s%-50s%-12s\n", "Categoria", "Descrição", " Prioridade", "  Data");
     printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
     while(fread(tarefa, sizeof(*tarefa), 1, bin_ptr) != 0){
