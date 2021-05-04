@@ -15,11 +15,11 @@ struct tarefa{
 
 /*---------------------------------------- I/O Binário ----------------------------------------*/
 
-void exclui_tarefa(long id){
+void exclui_tarefa(){
 
 }
 
-void edita_tarefa(long id){
+void edita_tarefa(){
 
 }
 
@@ -48,14 +48,16 @@ void salva_tarefa(struct tarefa *tarefa){
 struct tarefa * cria_tarefa(){
     struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(*tarefa));
 
-    printf("Digite a categoria de seu compromisso:\n ");
-    scanf("%s", tarefa->categoria);
-;
-    printf("Digite a descrição de seu compromisso:\n ");
-    scanf("%s", tarefa->descricao);
+    printf("Digite a categoria de seu compromisso:\n");
+    fgets(tarefa->categoria, 50, stdin);
+    //while ((getchar()) != '\n');
+
+    printf("Digite a descrição de seu compromisso:\n");
+    fgets(tarefa->descricao, 50, stdin);
+    //while ((getchar()) != '\n');
 
     do{
-        printf("Digite um número de 1 a 5 relacionado a prioridade (1 --> Urgente / 5 --> Baixa Importância)\n");
+        printf("Digite um número de 1 a 5 relacionado a prioridade (1 --> Urgente / 5 --> Baixa Importância):\n");
         scanf("%d", &tarefa->prioridade);
     }while(tarefa->prioridade<1 || tarefa->prioridade>5);
 
@@ -97,11 +99,11 @@ void consulta_tarefas(){
         exit(1);
     }
 
-    printf("         %-50s%-50s%-50s%-12s\n", "Categoria", "Descrição", " Prioridade", "  Data");
+    printf("         %-50s%-50s%-50s%-12s\n", "Categoria", "Descrição", "Prioridade", "   Data");
     printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
     while(fread(tarefa, sizeof(*tarefa), 1, bin_ptr) != 0){
-        printf("-> %ld", tarefa->id+1);
+        printf("-> %-2ld", tarefa->id+1);
         printf("     %-50s", tarefa->categoria);
         printf("%-50s", tarefa->descricao);
         printf("%-50d", tarefa->prioridade);
@@ -114,12 +116,24 @@ void consulta_tarefas(){
 /*--------------------------------------------------------------------------------------------*/
 
 void main(){
-    //struct tarefa *tarefa = cria_tarefa();
-    //salva_tarefa(tarefa);
-    consulta_tarefas();
+
+    int input=0;
+    while(input!=5){
+        printf("Selecione uma das ações para realizar (digite o número da ação):\n1 -> Inserir nova tarefa\n2 -> Editar uma tarefa\n3 -> Excluir uma tarefa\n4 -> Consultar tarefas\n5 -> Encerrar sessão\n");
+        scanf("%d", &input);
+        while ((getchar()) != '\n');
+        if(input==1){
+            struct tarefa *tarefa = cria_tarefa();
+            salva_tarefa(tarefa);
+        }else if(input==2){
+            edita_tarefa();
+        }else if(input==3){
+            exclui_tarefa();
+        }else if(input==4){
+            consulta_tarefas();
+        }
+    }
+    /*struct tarefa *tarefa = cria_tarefa();
+    salva_tarefa(tarefa);
+    consulta_tarefas();*/
 }
-
-
-//struct tarefa *tarefa cria_tarefa(void)
-
-
