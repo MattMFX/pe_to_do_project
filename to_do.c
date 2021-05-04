@@ -144,11 +144,12 @@ void consulta_tarefas(){
         exit(1);
     }
 
-    printf("%-50s%-50s%-50s%-12s\n", "Categoria", "Descrição", " Prioridade", "  Data");
-    printf("---------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    printf("         %-50s%-50s%-50s%-12s\n", "Categoria", "Descrição", " Prioridade", "  Data");
+    printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
     while(fread(tarefa, sizeof(*tarefa), 1, bin_ptr) != 0){
-        printf("%-50s", tarefa->categoria);
+        printf("-> %ld", tarefa->id+1);
+        printf("     %-50s", tarefa->categoria);
         printf("%-50s", tarefa->descricao);
         printf("%-50d", tarefa->prioridade);
         printf("%d/%d/%d\n", tarefa->dia, tarefa->mes, tarefa->ano);
@@ -160,8 +161,8 @@ void consulta_tarefas(){
 /*--------------------------------------------------------------------------------------------*/
 
 void main(){
-    /*struct tarefa *tarefa = cria_tarefa();
-    salva_tarefa(tarefa);*/
+    //struct tarefa *tarefa = cria_tarefa();
+    //salva_tarefa(tarefa);
     consulta_tarefas();
 }
 
