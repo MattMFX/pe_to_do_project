@@ -13,15 +13,30 @@ struct tarefa{
     char categoria[200];
 };
 
-/*---------------------------------------- I/O Bin�rio ----------------------------------------*/
 
+
+
+
+
+
+
+
+/*---------------------------------------- I/O Binário ----------------------------------------*/
 void exclui_tarefa(){
 
 }
 
+
+
+
+
 void edita_tarefa(){
 
 }
+
+
+
+
 
 void salva_tarefa(struct tarefa *tarefa){
     FILE *bin_ptr = NULL;
@@ -31,16 +46,23 @@ void salva_tarefa(struct tarefa *tarefa){
         printf("Erro ao salvar as mudan�as, tente novamente");
     }else{
         int tamanho_arquivo = ftell(bin_ptr);
-        tarefa->id = tamanho_arquivo/128;
+        tarefa->id = tamanho_arquivo/424;
         fwrite(tarefa, sizeof(*tarefa), 1, bin_ptr);
         fclose(bin_ptr);
     }
 }
-
-
-
 /*---------------------------------------------------------------------------------------------*/
-/*---------------------------------------- Validações ----------------------------------------*/
+
+
+
+
+
+
+
+
+
+
+/*---------------------------------------- Validações -----------------------------------------*/
 int valida_inteiro(char *entrada){
     int i;
     int verif;
@@ -54,10 +76,18 @@ int valida_inteiro(char *entrada){
     }
     return retorno;
 }
+/*---------------------------------------------------------------------------------------------*/
+
+
+
+
+
+
+
+
+
 
 /*---------------------------------------- I/O Usuário ----------------------------------------*/
-
-
 struct tarefa * cria_tarefa(){
     struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(*tarefa));
     char buffer[100];
@@ -128,8 +158,12 @@ struct tarefa * cria_tarefa(){
 
     return tarefa;
 }
-
 /*--------------------------------------------------------------------------------------------*/
+
+
+
+
+
 
 
 
@@ -137,15 +171,18 @@ struct tarefa * cria_tarefa(){
 
 /*---------------------------------------- Ordenações ----------------------------------------*/
 
-
-
-
-
 /*--------------------------------------------------------------------------------------------*/
 
 
-/*---------------------------------------- Consultas -----------------------------------------*/
 
+
+
+
+
+
+
+
+/*---------------------------------------- Consultas -----------------------------------------*/
 void consulta_tarefas(){
 
     FILE *bin_ptr = fopen("tarefas.bin", "rb");
@@ -155,25 +192,31 @@ void consulta_tarefas(){
     //Se o fopen retornar nulo, o arquivo n�o existe
 
     if(bin_ptr == NULL){
-        printf("Erro ao abrir, o arquivo bin�rio est� vazio!!\n");
-        exit(1);
-    }
+        printf("Erro ao abrir, não existe nenhuma tarefa!!\n");
+    }else{
+        while(fread(tarefa, sizeof(*tarefa), 1, bin_ptr) != 0){
+            printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
+            printf("---> %ld\n\n", tarefa->id+1);
+            printf("- Categoria: %s\n", tarefa->categoria);
+            printf("- Descrição: %s\n", tarefa->descricao);
+            printf("- Prioridade: %d\n\n", tarefa->prioridade);
+            printf("- Data: %d/%d/%d\n\n", tarefa->dia, tarefa->mes, tarefa->ano);
+        }
 
-    printf("         %-50s%-50s%-50s%-12s\n", "Categoria", "Descrição", "Prioridade", "   Data");
     printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
-
-    while(fread(tarefa, sizeof(*tarefa), 1, bin_ptr) != 0){
-        printf("-> %-2ld", tarefa->id+1);
-        printf("     %-50s", tarefa->categoria);
-        printf("%-50s", tarefa->descricao);
-        printf("%-50d", tarefa->prioridade);
-        printf("%d/%d/%d\n", tarefa->dia, tarefa->mes, tarefa->ano);
-    }
-
     fclose(bin_ptr);
+    }
 }
-
 /*--------------------------------------------------------------------------------------------*/
+
+
+
+
+
+
+
+
+
 
 void main(){
 
