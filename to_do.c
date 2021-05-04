@@ -40,7 +40,20 @@ void salva_tarefa(struct tarefa *tarefa){
 
 
 /*---------------------------------------------------------------------------------------------*/
-
+/*---------------------------------------- Validações ----------------------------------------*/
+int valida_inteiro(char *entrada){
+    int i;
+    int verif;
+    int retorno = 0;
+    for(i = 0; i < strlen(entrada); i++){
+        if(entrada[i] >= '0' && entrada[i] <='9'){
+            verif = entrada[i] - '0';
+        }else{
+            retorno = 1;
+        }
+    }
+    return retorno;
+}
 
 /*---------------------------------------- I/O Usuário ----------------------------------------*/
 
@@ -56,7 +69,7 @@ struct tarefa * cria_tarefa(){
 
     if(strlen(tarefa->categoria) > 200){
         do{
-            printf("PUTS! Você gosta de escrever, hein... sua categoria deve ser menor!:\nDigite uma nova categoria:\n");
+            printf("PUTS! Você gosta de escrever, hein... sua categoria deve ser menor!:(\nDigite uma nova categoria:\n");
             fgets(tarefa->categoria, 600, stdin);
             fflush(stdin);
         }while(strlen(tarefa->categoria) > 200);
@@ -69,7 +82,7 @@ struct tarefa * cria_tarefa(){
 
    if(strlen(tarefa->descricao) > 200){
         do{
-            printf("PUTS! Você gosta de escrever, hein... sua descrição deve ser menor!:\nDigite uma nova descrição:\n");
+            printf("PUTS! Você gosta de escrever, hein... sua descrição deve ser menor!:(\nDigite uma nova descrição:\n");
             fgets(tarefa->descricao, 1000, stdin);
             fflush(stdin);
         }while(strlen(tarefa->descricao) > 200);
@@ -77,19 +90,19 @@ struct tarefa * cria_tarefa(){
 
 
     printf("Digite um número de 1 a 5 relacionado a prioridade (1 --> Urgente / 5 --> Baixa Import�ncia)\n");
-    char *entrada = gets(buffer);
+    scanf("%s", buffer);
     fflush(stdin);
-    ind = valida_inteiro(entrada);
+    ind = valida_inteiro(buffer);
     tarefa->prioridade = atoi(buffer);
 
-    if ((ind == NULL)||(tarefa->prioridade<1 || tarefa->prioridade>5)){
+    if ((ind == 1)||(tarefa->prioridade<1 || tarefa->prioridade>5)){
         do{
             printf("PUTS! Parece que sua entrada n�o � v�lida para essa categoria! :(\nVocê deve digitar um número de 1 a 5! :)\n");
-            entrada = gets(buffer);
+            scanf("%s", buffer);
             fflush(stdin);
-            ind = valida_inteiro(entrada);
+            ind = valida_inteiro(buffer);
             tarefa->prioridade = atoi(buffer);
-        }while ((ind == NULL)||(tarefa->prioridade<1 || tarefa->prioridade>5));
+        }while ((ind == 1)||(tarefa->prioridade<1 || tarefa->prioridade>5));
     }
 
 //Recebe Data
@@ -119,20 +132,6 @@ struct tarefa * cria_tarefa(){
 /*--------------------------------------------------------------------------------------------*/
 
 
-
-
-/*---------------------------------------- Validações ----------------------------------------*/
-int valida_inteiro(char *entrada){
-    int i;
-    int verif;
-    for(i = 0; i < strlen(entrada); i++){
-        if(entrada[i] >= '0' && entrada[i] <='9'){
-            verif = entrada[i] - '0';
-        }else{
-            return NULL;
-        }
-    }
-}
 
 
 
