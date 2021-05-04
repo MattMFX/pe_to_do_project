@@ -13,7 +13,7 @@ struct tarefa{
     char categoria[50];
 };
 
-/*---------------------------------------- I/O Binário ----------------------------------------*/
+/*---------------------------------------- I/O Bin�rio ----------------------------------------*/
 
 void exclui_tarefa(){
 
@@ -28,11 +28,11 @@ void salva_tarefa(struct tarefa *tarefa){
     bin_ptr = fopen("tarefas.bin", "ab");
 
     if(bin_ptr == NULL){
-        printf("Erro ao salvar as mudanças, tente novamente");
+        printf("Erro ao salvar as mudan�as, tente novamente");
     }else{
         int tamanho_arquivo = ftell(bin_ptr);
         tarefa->id = tamanho_arquivo/128;
-        fwrite(tarefa, sizeof(*tarefa), 1, bin_ptr); 
+        fwrite(tarefa, sizeof(*tarefa), 1, bin_ptr);
         fclose(bin_ptr);
     }
 }
@@ -47,31 +47,72 @@ void salva_tarefa(struct tarefa *tarefa){
 
 struct tarefa * cria_tarefa(){
     struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(*tarefa));
+    char buffer[100];
+    int ind;
 
     printf("Digite a categoria de seu compromisso:\n");
     fgets(tarefa->categoria, 50, stdin);
-    //while ((getchar()) != '\n');
 
     printf("Digite a descrição de seu compromisso:\n");
     fgets(tarefa->descricao, 50, stdin);
-    //while ((getchar()) != '\n');
 
-    do{
-        printf("Digite um número de 1 a 5 relacionado a prioridade (1 --> Urgente / 5 --> Baixa Importância):\n");
-        scanf("%d", &tarefa->prioridade);
-    }while(tarefa->prioridade<1 || tarefa->prioridade>5);
+    printf("Digite um número de 1 a 5 relacionado a prioridade (1 --> Urgente / 5 --> Baixa Import�ncia)\n");
+    char *entrada = gets(buffer);
+    fflush(stdin);
+    ind = valida_inteiro(entrada);
+    tarefa->prioridade = atoi(buffer);
 
+    if ((ind == NULL)||(tarefa->prioridade<1 || tarefa->prioridade>5)){
+        do{
+            printf("PUTS! Parece que sua entrada n�o � v�lida para essa categoria! :(\nVocê deve digitar um número de 1 a 5! :)\n");
+            entrada = gets(buffer);
+            fflush(stdin);
+            ind = valida_inteiro(entrada);
+            tarefa->prioridade = atoi(buffer);
+        }while ((ind == NULL)||(tarefa->prioridade<1 || tarefa->prioridade>5));
+    }
+
+//Recebe Data
     printf("Digite a data do compromisso com o seguinte formato: dd/mm/aaaa\n");
-    char data[11];
-    scanf("%s", data);
-    tarefa->dia = atoi(data);
-    tarefa->mes = atoi(data+3);
-    tarefa->ano = atoi(data+6);
+    scanf("%s", buffer);
+    fflush(stdin);
+
+    tarefa->dia = atoi(buffer);
+    tarefa->mes = atoi(buffer+3);
+    tarefa->ano = atoi(buffer+6);
+
+    if ( (tarefa->dia<1 || tarefa->dia>31)  || (tarefa->mes<1 || tarefa->mes>12)  || (tarefa->ano<1) ){
+        do{
+            printf("PUTS! Parece que sua entrada não é válida para essa categoria! :(\nVocê deve digitar uma data existente com o seguinte formato: dd/mm/aaaa! :)\n");
+            scanf("%s", buffer);
+            fflush(stdin);
+            tarefa->dia = atoi(buffer);
+            tarefa->mes = atoi(buffer+3);
+            tarefa->ano = atoi(buffer+6);
+
+        }while ( (tarefa->dia<1 || tarefa->dia>31)  || (tarefa->mes<1 || tarefa->mes>12)  || (tarefa->ano<1) );
+    }
 
     return tarefa;
 }
 
 /*--------------------------------------------------------------------------------------------*/
+
+
+
+
+/*---------------------------------------- Validações ----------------------------------------*/
+int valida_inteiro(char *entrada){
+    int i;
+    int verif;
+    for(i = 0; i < strlen(entrada); i++){
+        if(entrada[i] >= '0' && entrada[i] <='9'){
+            verif = entrada[i] - '0';
+        }else{
+            return NULL;
+        }
+    }
+}
 
 
 
@@ -92,10 +133,10 @@ void consulta_tarefas(){
     struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(struct tarefa));
     char indicador;
 
-    //Se o fopen retornar nulo, o arquivo não existe
+    //Se o fopen retornar nulo, o arquivo n�o existe
 
     if(bin_ptr == NULL){
-        printf("Erro ao abrir, o arquivo binário está vazio!!\n");
+        printf("Erro ao abrir, o arquivo bin�rio est� vazio!!\n");
         exit(1);
     }
 
@@ -133,7 +174,4 @@ void main(){
             consulta_tarefas();
         }
     }
-    /*struct tarefa *tarefa = cria_tarefa();
-    salva_tarefa(tarefa);
-    consulta_tarefas();*/
 }
