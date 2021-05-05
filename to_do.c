@@ -52,8 +52,6 @@ void salva_tarefa(struct tarefa *tarefa){
         fwrite(tarefa, sizeof(*tarefa), 1, bin_ptr);
         fclose(bin_ptr);
     }
-
-    free(tarefa);
 }
 /*---------------------------------------------------------------------------------------------*/
 
@@ -78,9 +76,6 @@ int valida_inteiro(char *entrada){
             retorno = 1;
         }
     }
-
-    free(entrada);
-
     return retorno;
 }
 /*---------------------------------------------------------------------------------------------*/
@@ -207,7 +202,7 @@ void consulta_tarefas(){
             printf("- Categoria: %s\n", tarefa->categoria);
             printf("- Descrição: %s\n", tarefa->descricao);
             printf("- Prioridade: %d\n\n", tarefa->prioridade);
-            printf("- Data: %d/%d/%d\n\n", tarefa->dia, tarefa->mes, tarefa->ano);
+            printf("- Data: %02d/%02d/%d\n\n", tarefa->dia, tarefa->mes, tarefa->ano);
         }
 
     printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
@@ -235,7 +230,6 @@ void main(){
         if(input==1){
             struct tarefa *tarefa = cria_tarefa();
             salva_tarefa(tarefa);
-            free(tarefa);
         }else if(input==2){
             edita_tarefa();
         }else if(input==3){
