@@ -200,7 +200,7 @@ void consulta_tarefas(){
             printf("- Categoria: %s\n", tarefa->categoria);
             printf("- Descrição: %s\n", tarefa->descricao);
             printf("- Prioridade: %d\n\n", tarefa->prioridade);
-            printf("- Data: %d/%d/%d\n\n", tarefa->dia, tarefa->mes, tarefa->ano);
+            printf("- Data: %02d/%02d/%d\n\n", tarefa->dia, tarefa->mes, tarefa->ano);
         }
 
     printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
