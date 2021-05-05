@@ -34,10 +34,14 @@ void exclui_tarefa(long id){
         fwrite(fseek(bin_ptr, position+424, SEEK_SET);, 1, 1, bin_ptr);
         position++;
     }
+
+    if(nextid != NULL){
+        exclui_tarefa(id+1);
+    }
+
     fclose(bin_ptr);
 }
 
-void ressalvar
 
 
 
