@@ -22,9 +22,22 @@ struct tarefa{
 
 
 /*---------------------------------------- I/O Binário ----------------------------------------*/
-void exclui_tarefa(){
+void exclui_tarefa(long id){
+    int position = id*424;
+    long nextid = (id + 1)*424;
 
+    FILE *bin_ptr = fopen("tarefas.bin", "rb+");
+    fread(&id, sizeof(bin_ptr), 1, bin_ptr);
+
+    while(position != nextid){
+        fseek(bin_ptr, position, SEEK_SET);
+        fwrite(fseek(bin_ptr, position+424, SEEK_SET);, 1, 1, bin_ptr);
+        position++;
+    }
+    fclose(bin_ptr);
 }
+
+void ressalvar
 
 
 
