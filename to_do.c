@@ -31,11 +31,11 @@ void exclui_tarefa(long id){
 
     while(position != nextid){
         fseek(bin_ptr, position, SEEK_SET);
-        fwrite(fseek(bin_ptr, position+424, SEEK_SET);, 1, 1, bin_ptr);
+        fwrite(fseek(bin_ptr, position+424, SEEK_SET), 1, 1, bin_ptr);
         position++;
     }
 
-    if(nextid != NULL){
+    if(id != NULL){
         exclui_tarefa(id+1);
     }
 
@@ -47,8 +47,26 @@ void exclui_tarefa(long id){
 
 
 
-void edita_tarefa(){
+void edita_tarefa(long id){
+    int position = id*424;
+    long nextid = (id + 1)*424;
 
+    FILE *bin_ptr = fopen("tarefas.bin", "rb+");
+    fread(&id, sizeof(bin_ptr), 1, bin_ptr);
+
+    while(position != nextid){
+        struct tarefa *tarefa = cria_tarefa();
+        int tamanho_arquivo = ftell(bin_ptr);
+        tarefa->id = tamanho_arquivo/424;
+        fwrite(tarefa, sizeof(*tarefa), 1, bin_ptr);
+        free(tarefa);
+    }
+
+    if(nextid != NULL){
+        exclui_tarefa(id+1);
+    }
+
+    fclose(bin_ptr);
 }
 
 
@@ -109,6 +127,7 @@ int valida_inteiro(char *entrada){
 
 
 
+/*---------------------------------------- I/O Usuário ----------------------------------------*/
 /*---------------------------------------- I/O Usuário ----------------------------------------*/
 struct tarefa * cria_tarefa(){
     struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(*tarefa));
