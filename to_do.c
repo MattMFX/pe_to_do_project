@@ -14,123 +14,6 @@ struct tarefa{
 };
 
 
-
-
-
-
-
-
-
-/*---------------------------------------- I/O Binário ----------------------------------------*/
-void exclui_tarefa(){
-    long id;
-    int position = id*424;
-    long nextid = (id + 1)*424;
-
-    FILE *bin_ptr = fopen("tarefas.bin", "rb+");
-    fread(&id, sizeof(bin_ptr), 1, bin_ptr);
-
-    while(position != nextid){
-        fseek(bin_ptr, position, SEEK_SET);
-        fwrite(fseek(bin_ptr, position+424, SEEK_SET), 1, 1, bin_ptr);
-        position++;
-    }
-
-    if(id != NULL){
-        exclui_tarefa(id+1);
-    }
-
-    fclose(bin_ptr);
-}
-
-
-
-
-
-
-void edita_tarefa(){
-    long id;
-    int position = id*424;
-    long nextid = (id + 1)*424;
-
-    FILE *bin_ptr = fopen("tarefas.bin", "rb+");
-    fread(&id, sizeof(bin_ptr), 1, bin_ptr);
-
-    while(position != nextid){
-        struct tarefa *tarefa = cria_tarefa();
-        int tamanho_arquivo = ftell(bin_ptr);
-        tarefa->id = tamanho_arquivo/424;
-        fwrite(tarefa, sizeof(*tarefa), 1, bin_ptr);
-        free(tarefa);
-    }
-
-    if(nextid != NULL){
-        exclui_tarefa(id+1);
-    }
-
-    fclose(bin_ptr);
-}
-
-
-
-
-
-void salva_tarefa(struct tarefa *tarefa){
-    FILE *bin_ptr = NULL;
-    bin_ptr = fopen("tarefas.bin", "ab");
-
-    if(bin_ptr == NULL){
-        printf("Erro ao salvar as mudan�as, tente novamente");
-    }else{
-        int tamanho_arquivo = ftell(bin_ptr);
-        tarefa->id = tamanho_arquivo/424;
-        fwrite(tarefa, sizeof(*tarefa), 1, bin_ptr);
-        fclose(bin_ptr);
-    }
-
-    free(tarefa);
-}
-/*---------------------------------------------------------------------------------------------*/
-
-
-
-
-
-
-
-
-
-
-/*---------------------------------------- Validações -----------------------------------------*/
-int valida_inteiro(char *entrada){
-    int i;
-    int verif;
-    int retorno = 0;
-    for(i = 0; i < strlen(entrada); i++){
-        if(entrada[i] >= '0' && entrada[i] <='9'){
-            verif = entrada[i] - '0';
-        }else{
-            retorno = 1;
-        }
-    }
-
-    free(entrada);
-
-    return retorno;
-}
-/*---------------------------------------------------------------------------------------------*/
-
-
-
-
-
-
-
-
-
-
-/*---------------------------------------- I/O Usuário ----------------------------------------*/
-/*---------------------------------------- I/O Usuário ----------------------------------------*/
 struct tarefa * cria_tarefa(){
     struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(*tarefa));
     char buffer[100];
@@ -201,6 +84,129 @@ struct tarefa * cria_tarefa(){
 
     return tarefa;
 }
+
+
+
+
+
+
+/*---------------------------------------- I/O Binário ----------------------------------------*/
+long int seleciona_tarefa(){
+    long id;
+    consulta_tarefas();
+    printf("Digite o ID da tarefa:\n");
+    scanf("%ld", &id);
+    return id;
+}
+
+
+
+void exclui_tarefa(){
+    long id = seleciona_tarefa();
+    int position = id*420;
+    long nextid = (id + 1)*420;
+
+    FILE *bin_ptr = fopen("tarefas.bin", "rb+");
+    fread(&id, sizeof(bin_ptr), 1, bin_ptr);
+
+    while(position != nextid){
+        fseek(bin_ptr, position, SEEK_SET);
+        fwrite(fseek(bin_ptr, position+420, SEEK_SET), 1, 1, bin_ptr);
+        position++;
+    }
+
+    if(id != NULL){
+        exclui_tarefa(id+1);
+    }
+
+    fclose(bin_ptr);
+}
+
+
+void edita_tarefa(){
+    long id = seleciona_tarefa();
+    int position = id*420;
+    long nextid = (id + 1)*420;
+
+    FILE *bin_ptr = fopen("tarefas.bin", "rb+");
+    fread(&id, sizeof(bin_ptr), 1, bin_ptr);
+
+    while(position != nextid){
+        struct tarefa *tarefa = cria_tarefa();
+        int tamanho_arquivo = ftell(bin_ptr);
+        tarefa->id = tamanho_arquivo/420;
+        fwrite(tarefa, sizeof(*tarefa), 1, bin_ptr);
+        free(tarefa);
+    }
+
+    if(nextid != NULL){
+        exclui_tarefa(id+1);
+    }
+
+    fclose(bin_ptr);
+}
+
+
+
+
+
+void salva_tarefa(struct tarefa *tarefa){
+    FILE *bin_ptr = NULL;
+    bin_ptr = fopen("tarefas.bin", "ab");
+
+    if(bin_ptr == NULL){
+        printf("Erro ao salvar as mudan�as, tente novamente");
+    }else{
+        int tamanho_arquivo = ftell(bin_ptr);
+        tarefa->id = tamanho_arquivo/420;
+        fwrite(tarefa, sizeof(*tarefa), 1, bin_ptr);
+        fclose(bin_ptr);
+    }
+
+    free(tarefa);
+}
+/*---------------------------------------------------------------------------------------------*/
+
+
+
+
+
+
+
+
+
+
+/*---------------------------------------- Validações -----------------------------------------*/
+int valida_inteiro(char *entrada){
+    int i;
+    int verif;
+    int retorno = 0;
+    for(i = 0; i < strlen(entrada); i++){
+        if(entrada[i] >= '0' && entrada[i] <='9'){
+            verif = entrada[i] - '0';
+        }else{
+            retorno = 1;
+        }
+    }
+
+    free(entrada);
+
+    return retorno;
+}
+/*---------------------------------------------------------------------------------------------*/
+
+
+
+
+
+
+
+
+
+
+/*---------------------------------------- I/O Usuário ----------------------------------------*/
+/*---------------------------------------- I/O Usuário ----------------------------------------*/
+
 /*--------------------------------------------------------------------------------------------*/
 
 
