@@ -47,8 +47,8 @@ void salva_tarefa(struct tarefa *tarefa){
     if(bin_ptr == NULL){
         printf("Erro ao salvar as mudan�as, tente novamente");
     }else{
-        int tamanho_arquivo = ftell(bin_ptr);
-        tarefa->id = tamanho_arquivo/424;
+        long tamanho_arquivo = ftell(bin_ptr);
+        tarefa->id = tamanho_arquivo/sizeof(struct tarefa);
         fwrite(tarefa, sizeof(*tarefa), 1, bin_ptr);
         fclose(bin_ptr);
     }
