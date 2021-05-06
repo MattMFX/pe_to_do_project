@@ -189,7 +189,7 @@ void consulta_tarefas(){
     struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(struct tarefa));
     char indicador;
 
-    //Se o fopen retornar nulo, o arquivo n�o existe
+
 
     if(bin_ptr == NULL){
         printf("Erro ao abrir, não existe nenhuma tarefa!!\n");
@@ -233,7 +233,7 @@ void consulta_prioridade(){
         }while ((ind == 1)||(entrada<1 || entrada>5));
     }
 
-
+    printf("Seu resultado da busca:\n");
     if(bin_ptr == NULL){
         printf("Erro ao abrir, não existe nenhuma tarefa!!\n");
     }else{
