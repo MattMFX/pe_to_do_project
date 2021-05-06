@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <stdbool.h>
 
 struct tarefa{
     long id;
@@ -172,8 +173,44 @@ struct tarefa * cria_tarefa(){
 
 
 /*---------------------------------------- Ordenações ----------------------------------------*/
-void quicksort(long **tarefa_ptr){
+int particiona(long **tarefa_ptr, int comeco, int fim){
+    int pivot = comeco;
+    int l=comeco, r=fim;
+    bool troca_sentido = false;
 
+    while(l<=r){
+        if(!troca_sentido){
+            if(tarefa_ptr[pivot][1]>tarefa_ptr[r][1]){
+                long *aux_ptr = tarefa_ptr[pivot];
+                tarefa_ptr[pivot] = tarefa_ptr[r];
+                tarefa_ptr[r] = aux_ptr;
+                pivot=r;
+                troca_sentido = true;
+            }
+            r--;
+        }else{
+            if(tarefa_ptr[pivot][1]<tarefa_ptr[l][1]){
+                long *aux_ptr = tarefa_ptr[pivot];
+                tarefa_ptr[pivot] = tarefa_ptr[l];
+                tarefa_ptr[l] = aux_ptr;
+                pivot=l;
+                troca_sentido = false;
+            }
+            l++;
+        }
+    }
+    
+    return pivot;
+}
+
+void quicksort(long **tarefa_ptr, int comeco, int fim){
+    int pivot =0;
+
+    if(comeco<fim){
+        pivot = particiona(tarefa_ptr, comeco, fim);
+        quicksort(tarefa_ptr, comeco, pivot-1);
+        quicksort(tarefa_ptr, pivot+1, fim);
+    }
 }
 /*--------------------------------------------------------------------------------------------*/
 
@@ -218,11 +255,11 @@ void consulta_tarefas(){
 
 
 
-void ordenado_por_data(int params){
+void consulta_ordenada(int params, int ordem){
     FILE *bin_ptr;
     bin_ptr = fopen("tarefas.bin", "ab");
     int num_de_tarefas = ftell(bin_ptr);
-    num_de_tarefas = num_de_tarefas/424;
+    num_de_tarefas = num_de_tarefas/sizeof(struct tarefa);
     fclose(bin_ptr);
 
     FILE *bin_ptr2;
@@ -245,20 +282,36 @@ void ordenado_por_data(int params){
                 tarefa_id[1] = (long) tarefa->prioridade;
             }
             tarefa_ptr[cont] = tarefa_id;
-            printf("%ld\n", tarefa_id[1]);
             cont++;
         }
 
-        quicksort(tarefa_ptr);
+        quicksort(tarefa_ptr, 0, num_de_tarefas-1);
         
-        for(int i=0; i<cont; i++){
-            fseek(bin_ptr2, (tarefa_ptr[i][0]*424), SEEK_SET);
+        bool iterou = false;
+        int i;
+        if(ordem==0){
+            i=0;
+        }else{
+            i=cont-1;
+        }
+
+        while(!iterou){
+            fseek(bin_ptr2, (tarefa_ptr[i][0]*sizeof(struct tarefa)), SEEK_SET);
             fread(tarefa, sizeof(*tarefa), 1, bin_ptr2);
             printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
             printf("- Categoria: %s\n", tarefa->categoria);
             printf("- Descrição: %s\n", tarefa->descricao);
             printf("- Prioridade: %d\n\n", tarefa->prioridade);
             printf("- Data: %02d/%02d/%d\n\n", tarefa->dia, tarefa->mes, tarefa->ano);
+            if(ordem==0 && i==cont-1){
+                iterou=true;
+            }else if(ordem==1 && i==0){
+                iterou=true;
+            }else if(ordem==0 && i<cont-1){
+                i++;
+            }else if(ordem==1 && i>0){
+                i--;
+            }
         }
 
         printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
@@ -293,8 +346,5 @@ void main(){
             exclui_tarefa();
         }else if(input==4){
             consulta_tarefas();
-        }else if(input==8){
-            ordenado_por_data(0);
-        }
     }
 }
