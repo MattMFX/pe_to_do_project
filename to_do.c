@@ -22,7 +22,8 @@ struct tarefa{
 
 
 /*---------------------------------------- I/O Binário ----------------------------------------*/
-void exclui_tarefa(long id){
+void exclui_tarefa(){
+    long id;
     int position = id*424;
     long nextid = (id + 1)*424;
 
@@ -47,7 +48,8 @@ void exclui_tarefa(long id){
 
 
 
-void edita_tarefa(long id){
+void edita_tarefa(){
+    long id;
     int position = id*424;
     long nextid = (id + 1)*424;
 
