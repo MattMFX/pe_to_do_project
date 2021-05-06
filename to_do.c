@@ -266,6 +266,72 @@ void consulta_prioridade(){
     }
 }
 /*--------------------------------------------------------------------------------------------*/
+void consulta_data(){
+
+    FILE *bin_ptr = fopen("tarefas.bin", "rb");
+    struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(struct tarefa));
+    char indicador;
+    char buffer[100];
+    int ind;
+    int entrada_dia;
+    int entrada_mes;
+    int entrada_ano;
+    int cont=0;
+
+    printf("Digite a data da(s) tarefa(s) que você deseja pesquisar (no formato dd/mm/aaaa):\n");
+    scanf("%s", buffer);
+    fflush(stdin);
+
+    entrada_dia = atoi(buffer);
+    entrada_mes = atoi(buffer+3);
+    entrada_ano = atoi(buffer+6);
+
+    if ((entrada_dia<1 ||entrada_dia>31)  || (entrada_mes<1 || entrada_mes>12)  || (entrada_ano<1)){
+        do{
+            printf("PUTS! Parece que essa data não é válida...! :(\nVocê deve digitar uma data no formato dd/mm/aaaa! :)\n");
+            scanf("%s", buffer);
+            fflush(stdin);
+            ind = valida_inteiro(buffer);
+            entrada_dia = atoi(buffer);
+            entrada_mes = atoi(buffer+3);
+            entrada_ano = atoi(buffer+6);
+        }while ((entrada_dia<1 ||entrada_dia>31)  || (entrada_mes<1 || entrada_mes>12)  || (entrada_ano<1));
+    }
+
+    printf("Seu resultado da busca:\n");
+    if(bin_ptr == NULL){
+        printf("Erro ao abrir, não existe nenhuma tarefa!!\n");
+    }else{
+        while(fread(tarefa, sizeof(*tarefa), 1, bin_ptr) != 0){
+            if ((entrada_dia == tarefa->dia)&&(entrada_mes == tarefa->mes)&&(entrada_ano == tarefa->ano)){
+                printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
+                printf("- Categoria: %s\n", tarefa->categoria);
+                printf("- Descrição: %s\n", tarefa->descricao);
+                printf("- Prioridade: %d\n\n", tarefa->prioridade);
+                printf("- Data: %02d/%02d/%d\n\n", tarefa->dia, tarefa->mes, tarefa->ano);
+                cont++;
+            }
+        }
+
+    printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    if(cont == 0){
+        printf("Parece que sua busca não obteve resultados, amigão... :(\n");
+        printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    }
+    else if(cont==1){
+        printf("Sua  busca obteve 1 único resultado!\n");
+        printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    }
+    else{
+        printf("Sua busca obteve %d resultados!\n", cont);
+        printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    }
+
+    fclose(bin_ptr);
+    }
+}
+/*--------------------------------------------------------------------------------------------*/
+
 
 
 
@@ -294,7 +360,7 @@ void main(){
             consulta_tarefas();
         }
         else if(input==7){
-            consulta_prioridade();
+            consulta_data();
         }
     }
 }
