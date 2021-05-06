@@ -1,3 +1,5 @@
+//STABLE 1.0
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,6 +16,8 @@ struct tarefa{
 };
 
 
+
+/*---------------------------------------- I/O Usuário ----------------------------------------*/
 struct tarefa * cria_tarefa(){
     struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(*tarefa));
     char buffer[100];
@@ -84,7 +88,7 @@ struct tarefa * cria_tarefa(){
 
     return tarefa;
 }
-
+/*--------------------------------------------------------------------------------------------*/
 
 
 
@@ -94,7 +98,7 @@ struct tarefa * cria_tarefa(){
 long int seleciona_tarefa(){
     long id;
     consulta_tarefas();
-    printf("Digite o ID da tarefa:\n");
+    printf("\n\nDigite o ID da tarefa: ");
     scanf("%ld", &id);
     return id;
 }
@@ -103,15 +107,15 @@ long int seleciona_tarefa(){
 
 void exclui_tarefa(){
     long id = seleciona_tarefa();
-    int position = id*420;
-    long nextid = (id + 1)*420;
+    int position = id*424;
+    long nextid = (id + 1)*424;
 
     FILE *bin_ptr = fopen("tarefas.bin", "rb+");
     fread(&id, sizeof(bin_ptr), 1, bin_ptr);
 
     while(position != nextid){
         fseek(bin_ptr, position, SEEK_SET);
-        fwrite(fseek(bin_ptr, position+420, SEEK_SET), 1, 1, bin_ptr);
+        fwrite(fseek(bin_ptr, position+424, SEEK_SET), 1, 1, bin_ptr);
         position++;
     }
 
@@ -125,25 +129,19 @@ void exclui_tarefa(){
 
 void edita_tarefa(){
     long id = seleciona_tarefa();
-    int position = id*420;
-    long nextid = (id + 1)*420;
+    int position = id*424;
+    long nextid = (id + 1)*424;
 
     FILE *bin_ptr = fopen("tarefas.bin", "rb+");
     fread(&id, sizeof(bin_ptr), 1, bin_ptr);
 
-    while(position != nextid){
-        struct tarefa *tarefa = cria_tarefa();
-        int tamanho_arquivo = ftell(bin_ptr);
-        tarefa->id = tamanho_arquivo/420;
-        fwrite(tarefa, sizeof(*tarefa), 1, bin_ptr);
-        free(tarefa);
-    }
-
-    if(nextid != NULL){
-        exclui_tarefa(id+1);
-    }
-
+    struct tarefa *tarefa = cria_tarefa();
+    fseek(bin_ptr, 0L, SEEK_END);
+    long tamanho_arquivo = ftell(bin_ptr);
+    tarefa->id = tamanho_arquivo/sizeof(struct tarefa);
+    fwrite(tarefa, sizeof(*tarefa), 1, bin_ptr);
     fclose(bin_ptr);
+    free(tarefa);
 }
 
 
@@ -157,13 +155,12 @@ void salva_tarefa(struct tarefa *tarefa){
     if(bin_ptr == NULL){
         printf("Erro ao salvar as mudan�as, tente novamente");
     }else{
-        int tamanho_arquivo = ftell(bin_ptr);
-        tarefa->id = tamanho_arquivo/420;
+        fseek(bin_ptr, 0L, SEEK_END);
+        long tamanho_arquivo = ftell(bin_ptr);
+        tarefa->id = tamanho_arquivo/sizeof(struct tarefa);
         fwrite(tarefa, sizeof(*tarefa), 1, bin_ptr);
         fclose(bin_ptr);
     }
-
-    free(tarefa);
 }
 /*---------------------------------------------------------------------------------------------*/
 
@@ -188,29 +185,9 @@ int valida_inteiro(char *entrada){
             retorno = 1;
         }
     }
-
-    free(entrada);
-
     return retorno;
 }
 /*---------------------------------------------------------------------------------------------*/
-
-
-
-
-
-
-
-
-
-
-/*---------------------------------------- I/O Usuário ----------------------------------------*/
-/*---------------------------------------- I/O Usuário ----------------------------------------*/
-
-/*--------------------------------------------------------------------------------------------*/
-
-
-
 
 
 
@@ -249,7 +226,7 @@ void consulta_tarefas(){
             printf("- Categoria: %s\n", tarefa->categoria);
             printf("- Descrição: %s\n", tarefa->descricao);
             printf("- Prioridade: %d\n\n", tarefa->prioridade);
-            printf("- Data: %d/%d/%d\n\n", tarefa->dia, tarefa->mes, tarefa->ano);
+            printf("- Data: %02d/%02d/%d\n\n", tarefa->dia, tarefa->mes, tarefa->ano);
         }
 
     printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
@@ -277,7 +254,6 @@ void main(){
         if(input==1){
             struct tarefa *tarefa = cria_tarefa();
             salva_tarefa(tarefa);
-            free(tarefa);
         }else if(input==2){
             edita_tarefa();
         }else if(input==3){
