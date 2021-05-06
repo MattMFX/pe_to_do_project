@@ -47,7 +47,7 @@ void salva_tarefa(struct tarefa *tarefa){
     if(bin_ptr == NULL){
         printf("Erro ao salvar as mudan�as, tente novamente");
     }else{
-        int tamanho_arquivo = ftell(bin_ptr);
+        long tamanho_arquivo = ftell(bin_ptr);
         tarefa->id = tamanho_arquivo/424;
         fwrite(tarefa, sizeof(*tarefa), 1, bin_ptr);
         fclose(bin_ptr);
@@ -218,7 +218,7 @@ void consulta_tarefas(){
 
 
 
-void ordenado_por_data(){
+void ordenado_por_data(int params){
     FILE *bin_ptr;
     bin_ptr = fopen("tarefas.bin", "ab");
     int num_de_tarefas = ftell(bin_ptr);
@@ -239,7 +239,11 @@ void ordenado_por_data(){
             fread(tarefa, sizeof(struct tarefa), 1, bin_ptr2);
             long *tarefa_id = (long *) malloc(sizeof(long)*2);
             tarefa_id[0] = tarefa->id;
-            tarefa_id[1] = (long) (tarefa->ano*10000 + tarefa->mes*100 + tarefa->dia);
+            if(params==0){
+                tarefa_id[1] = (long) (tarefa->ano*10000 + tarefa->mes*100 + tarefa->dia);
+            }else if(params==1){
+                tarefa_id[1] = (long) tarefa->prioridade;
+            }
             tarefa_ptr[cont] = tarefa_id;
             printf("%ld\n", tarefa_id[1]);
             cont++;
@@ -275,6 +279,7 @@ void ordenado_por_data(){
 void main(){
 
     int input=0;
+    printf("%ld", sizeof(long));
     while(input!=5){
         printf("Selecione uma das ações para realizar (digite o número da ação):\n1 -> Inserir nova tarefa\n2 -> Editar uma tarefa\n3 -> Excluir uma tarefa\n4 -> Consultar tarefas\n5 -> Encerrar sessão\n");
         scanf("%d", &input);
@@ -289,7 +294,7 @@ void main(){
         }else if(input==4){
             consulta_tarefas();
         }else if(input==8){
-            ordenado_por_data();
+            ordenado_por_data(0);
         }
     }
 }
