@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <ctype.h>
 
 struct tarefa{
     long id;
@@ -55,8 +56,36 @@ void salva_tarefa(struct tarefa *tarefa){
 
 
 
+/*---------------------------------------- Comparações de String -------------------------------*/
+char * remove_espacos(char * saida, char * entrada){
+    int k=0;
+    int i=0;
+    for (i=0; i <= strlen(entrada) ; i++){
+        if(!isspace(entrada[i])){
+            saida[k++]=entrada[i];
+        }
+    }
+    saida[k]=0;
+    return saida;
+}
 
+int compara_string(char * primeira, char * segunda){
+    int i=0;
+    int ind=0;
 
+    char primeira_limpa [200] = {0};
+    char segunda_limpa [200] = {0};
+
+    remove_espacos(primeira_limpa, primeira);
+    remove_espacos(segunda_limpa, segunda);
+
+    for (i=0; i <= strlen(primeira_limpa) ; i++){
+        if((tolower(primeira_limpa[i])) != (tolower(segunda_limpa[i]))){
+            ind=1;
+        }
+    }
+    return ind;
+}
 
 
 
@@ -207,7 +236,7 @@ void consulta_tarefas(){
     fclose(bin_ptr);
     }
 }
-/*--------------------------------------------------------------------------------------------*/
+
 void consulta_prioridade(){
 
     FILE *bin_ptr = fopen("tarefas.bin", "rb");
@@ -265,7 +294,7 @@ void consulta_prioridade(){
     fclose(bin_ptr);
     }
 }
-/*--------------------------------------------------------------------------------------------*/
+
 void consulta_data(){
 
     FILE *bin_ptr = fopen("tarefas.bin", "rb");
