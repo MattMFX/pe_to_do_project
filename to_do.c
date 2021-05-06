@@ -172,8 +172,12 @@ struct tarefa * cria_tarefa(){
 
 
 /*---------------------------------------- Ordenações ----------------------------------------*/
+void quicksort(long **tarefa_ptr){
 
+}
 /*--------------------------------------------------------------------------------------------*/
+
+
 
 
 
@@ -209,6 +213,54 @@ void consulta_tarefas(){
     fclose(bin_ptr);
     }
 }
+
+
+
+
+
+void ordenado_por_data(){
+    FILE *bin_ptr;
+    bin_ptr = fopen("tarefas.bin", "ab");
+    int num_de_tarefas = ftell(bin_ptr);
+    num_de_tarefas = num_de_tarefas/424;
+    fclose(bin_ptr);
+
+    FILE *bin_ptr2;
+    bin_ptr2 = fopen("tarefas.bin", "rb");
+
+    struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(struct tarefa));
+    long **tarefa_ptr = (long **) malloc(sizeof(long *)*num_de_tarefas);
+    
+    if(bin_ptr2 == NULL){
+        printf("Erro ao abrir, não existe nenhuma tarefa!!\n");
+    }else{
+        int cont=0;
+        while(cont<num_de_tarefas){
+            fread(tarefa, sizeof(struct tarefa), 1, bin_ptr2);
+            long *tarefa_id = (long *) malloc(sizeof(long)*2);
+            tarefa_id[0] = tarefa->id;
+            tarefa_id[1] = (long) (tarefa->ano*10000 + tarefa->mes*100 + tarefa->dia);
+            tarefa_ptr[cont] = tarefa_id;
+            printf("%ld\n", tarefa_id[1]);
+            cont++;
+        }
+
+        quicksort(tarefa_ptr);
+        
+        for(int i=0; i<cont; i++){
+            fseek(bin_ptr2, (tarefa_ptr[i][0]*424), SEEK_SET);
+            fread(tarefa, sizeof(*tarefa), 1, bin_ptr2);
+            printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
+            printf("- Categoria: %s\n", tarefa->categoria);
+            printf("- Descrição: %s\n", tarefa->descricao);
+            printf("- Prioridade: %d\n\n", tarefa->prioridade);
+            printf("- Data: %02d/%02d/%d\n\n", tarefa->dia, tarefa->mes, tarefa->ano);
+        }
+
+        printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        fclose(bin_ptr2);
+    }
+}
 /*--------------------------------------------------------------------------------------------*/
 
 
@@ -236,6 +288,8 @@ void main(){
             exclui_tarefa();
         }else if(input==4){
             consulta_tarefas();
+        }else if(input==8){
+            ordenado_por_data();
         }
     }
 }
