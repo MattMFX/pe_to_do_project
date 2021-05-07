@@ -1,4 +1,5 @@
-//STABLE 1.45
+
+/*----------------------------------------------------------- STABLE 1.46 ---------------------------------------------------------------------------*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,7 +20,7 @@ struct tarefa{
 
 void salva_tarefa(struct tarefa *tarefa);
 struct tarefa * cria_tarefa();
-void consulta_tarefas();
+int consulta_tarefas();
 int valida_inteiro(char *entrada);
 
 
@@ -29,9 +30,13 @@ int valida_inteiro(char *entrada);
 
 
 /*---------------------------------------- I/O Binário ----------------------------------------*/
-long int seleciona_tarefa(){
+long seleciona_tarefa(){
     long id;
-    consulta_tarefas();
+    int status = consulta_tarefas();
+    if(status == 0){
+        return -1;
+    }
+
     printf("\n\nDigite o ID da tarefa (número que aparece acima): ");
     scanf("%ld", &id);
     while ((getchar()) != '\n');
@@ -43,8 +48,11 @@ long int seleciona_tarefa(){
 
 
 
-void exclui_tarefa(){
+int exclui_tarefa(){
     long id = seleciona_tarefa();
+    if(id == -1){
+        return 0;
+    }
 
     rename("tarefas.bin", "tarefas_deprecated.bin");
 
@@ -67,8 +75,11 @@ void exclui_tarefa(){
 
 
 
-void edita_tarefa(){
+int edita_tarefa(){
     long id = seleciona_tarefa();
+    if(id == -1){
+        return 0;
+    }
 
     FILE *bin_ptr_temp = fopen("tarefas_temp.bin", "wb+");
     FILE *bin_ptr = fopen("tarefas.bin", "rb");
@@ -350,7 +361,7 @@ void quicksort(long **tarefa_ptr, int comeco, int fim){
 
 
 /*---------------------------------------- Consultas -----------------------------------------*/
-void consulta_tarefas(){
+int consulta_tarefas(){
 
     FILE *bin_ptr = fopen("tarefas.bin", "rb");
     struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(struct tarefa));
@@ -359,7 +370,8 @@ void consulta_tarefas(){
 
 
     if(bin_ptr == NULL){
-        printf("Erro ao abrir, não existe nenhuma tarefa!!\n");
+        printf("\nErro ao consultar, não existe nenhuma tarefa!!\n");
+        return 0;
     }else{
         while(fread(tarefa, sizeof(*tarefa), 1, bin_ptr) != 0){
             printf("\n-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
@@ -379,70 +391,68 @@ void consulta_tarefas(){
 
 
 
-void consulta_ordenada(int params, int ordem){
+int consulta_ordenada(int params, int ordem){
     FILE *bin_ptr;
-    bin_ptr = fopen("tarefas.bin", "ab");
+    bin_ptr = fopen("tarefas.bin", "rb");
+    if(bin_ptr == NULL){
+        printf("\nErro ao consultar, não existe nenhuma tarefa!!\n");
+        return 0;
+    }
+
     fseek(bin_ptr, 0L, SEEK_END);
     long num_de_tarefas = ftell(bin_ptr);
     num_de_tarefas = num_de_tarefas/sizeof(struct tarefa);
     fclose(bin_ptr);
 
-    FILE *bin_ptr2;
-    bin_ptr2 = fopen("tarefas.bin", "rb");
-
     struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(struct tarefa));
     long **tarefa_ptr = (long **) malloc(sizeof(long *)*num_de_tarefas);
 
-    if(bin_ptr2 == NULL){
-        printf("Erro ao abrir, não existe nenhuma tarefa!!\n");
-    }else{
-        int cont=0;
-        while(cont<(int) num_de_tarefas){
-            fread(tarefa, sizeof(struct tarefa), 1, bin_ptr2);
-            long *tarefa_id = (long *) malloc(sizeof(long)*2);
-            tarefa_id[0] = tarefa->id;
-            if(params==0){
-                tarefa_id[1] = (long) (tarefa->ano*10000 + tarefa->mes*100 + tarefa->dia);
-            }else if(params==1){
-                tarefa_id[1] = (long) tarefa->prioridade;
-            }
-            tarefa_ptr[cont] = tarefa_id;
-            cont++;
+    int cont=0;
+    while(cont<(int) num_de_tarefas){
+        fread(tarefa, sizeof(struct tarefa), 1, bin_ptr);
+        long *tarefa_id = (long *) malloc(sizeof(long)*2);
+        tarefa_id[0] = tarefa->id;
+        if(params==0){
+            tarefa_id[1] = (long) (tarefa->ano*10000 + tarefa->mes*100 + tarefa->dia);
+        }else if(params==1){
+            tarefa_id[1] = (long) tarefa->prioridade;
         }
-
-        quicksort(tarefa_ptr, 0, (int) (num_de_tarefas-1));
-
-        bool iterou = false;
-        int i;
-        if(ordem==0){
-            i=0;
-        }else{
-            i=cont-1;
-        }
-
-        while(!iterou){
-            fseek(bin_ptr2, (tarefa_ptr[i][0]*sizeof(struct tarefa)), SEEK_SET);
-            fread(tarefa, sizeof(*tarefa), 1, bin_ptr2);
-            printf("\n-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
-            printf("---> %ld\n\n", tarefa->id+1);
-            printf("- Categoria: %s\n", tarefa->categoria);
-            printf("- Descrição: %s\n", tarefa->descricao);
-            printf("- Prioridade: %d\n\n", tarefa->prioridade);
-            printf("- Data: %02d/%02d/%d\n\n", tarefa->dia, tarefa->mes, tarefa->ano);
-            if(ordem==0 && i==cont-1){
-                iterou=true;
-            }else if(ordem==1 && i==0){
-                iterou=true;
-            }else if(ordem==0 && i<cont-1){
-                i++;
-            }else if(ordem==1 && i>0){
-                i--;
-            }
-        }
-
-        printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
-        fclose(bin_ptr2);
+        tarefa_ptr[cont] = tarefa_id;
+        cont++;
     }
+
+    quicksort(tarefa_ptr, 0, (int) (num_de_tarefas-1));
+
+    bool iterou = false;
+    int i;
+    if(ordem==0){
+        i=0;
+    }else{
+        i=cont-1;
+    }
+
+    while(!iterou){
+        fseek(bin_ptr, (tarefa_ptr[i][0]*sizeof(struct tarefa)), SEEK_SET);
+        fread(tarefa, sizeof(*tarefa), 1, bin_ptr);
+        printf("\n-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
+        printf("---> %ld\n\n", tarefa->id+1);
+        printf("- Categoria: %s\n", tarefa->categoria);
+        printf("- Descrição: %s\n", tarefa->descricao);
+        printf("- Prioridade: %d\n\n", tarefa->prioridade);
+        printf("- Data: %02d/%02d/%d\n\n", tarefa->dia, tarefa->mes, tarefa->ano);
+        if(ordem==0 && i==cont-1){
+            iterou=true;
+        }else if(ordem==1 && i==0){
+            iterou=true;
+        }else if(ordem==0 && i<cont-1){
+            i++;
+        }else if(ordem==1 && i>0){
+            i--;
+        }
+    }
+
+    printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    fclose(bin_ptr);
 }
 
 
@@ -694,5 +704,6 @@ void main(){
         }
     }
 
+    printf("\n-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
     printf("\nAté a próxima!!\n\n");
 }
