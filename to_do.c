@@ -1,4 +1,4 @@
-//STABLE 1.0
+//STABLE 1.2
 
 #include <stdio.h>
 #include <stdlib.h>
