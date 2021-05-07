@@ -1,4 +1,4 @@
-//STABLE 1.44
+//STABLE 1.45
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -362,7 +362,7 @@ void consulta_tarefas(){
         printf("Erro ao abrir, não existe nenhuma tarefa!!\n");
     }else{
         while(fread(tarefa, sizeof(*tarefa), 1, bin_ptr) != 0){
-            printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
+            printf("\n-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
             printf("---> %ld\n\n", tarefa->id+1);
             printf("- Categoria: %s\n", tarefa->categoria);
             printf("- Descrição: %s\n", tarefa->descricao);
@@ -423,7 +423,7 @@ void consulta_ordenada(int params, int ordem){
         while(!iterou){
             fseek(bin_ptr2, (tarefa_ptr[i][0]*sizeof(struct tarefa)), SEEK_SET);
             fread(tarefa, sizeof(*tarefa), 1, bin_ptr2);
-            printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
+            printf("\n-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
             printf("---> %ld\n\n", tarefa->id+1);
             printf("- Categoria: %s\n", tarefa->categoria);
             printf("- Descrição: %s\n", tarefa->descricao);
@@ -479,7 +479,7 @@ void consulta_prioridade(){
     }else{
         while(fread(tarefa, sizeof(*tarefa), 1, bin_ptr) != 0){
             if (entrada == tarefa->prioridade){
-                printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
+                printf("\n-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
                 printf("---> %ld\n\n", tarefa->id+1);
                 printf("- Categoria: %s\n", tarefa->categoria);
                 printf("- Descrição: %s\n", tarefa->descricao);
@@ -549,7 +549,7 @@ void consulta_data(){
     }else{
         while(fread(tarefa, sizeof(*tarefa), 1, bin_ptr) != 0){
             if ((entrada_dia == tarefa->dia)&&(entrada_mes == tarefa->mes)&&(entrada_ano == tarefa->ano)){
-                printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
+                printf("\n-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
                 printf("---> %ld\n\n", tarefa->id+1);
                 printf("- Categoria: %s\n", tarefa->categoria);
                 printf("- Descrição: %s\n", tarefa->descricao);
@@ -604,7 +604,7 @@ void consulta_categoria(){
     }else{
         while(fread(tarefa, sizeof(*tarefa), 1, bin_ptr) != 0){
             if (compara_string(entrada,tarefa->categoria)==0){
-                printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
+                printf("\n-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
                 printf("---> %ld\n\n", tarefa->id+1);
                 printf("- Categoria: %s\n", tarefa->categoria);
                 printf("- Descrição: %s\n", tarefa->descricao);
@@ -645,9 +645,12 @@ void consulta_categoria(){
 
 void main(){
 
+    printf("\nBem vindo ao seu gerenciador de tarefas!!\n\n");
+    printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+
     int input=0;
     while(input!=5){
-        printf("Selecione uma das ações para realizar (digite o número da ação):\n1 -> Inserir nova tarefa\n2 -> Editar uma tarefa\n3 -> Excluir uma tarefa\n4 -> Consultar tarefas\n5 -> Encerrar sessão\n");
+        printf("\nSelecione uma das ações para realizar (digite o número da ação):\n1 -> Inserir nova tarefa\n2 -> Editar uma tarefa\n3 -> Excluir uma tarefa\n4 -> Consultar tarefas\n5 -> Encerrar sessão\n");
         scanf("%d", &input);
         while ((getchar()) != '\n');
         if(input==1){
@@ -658,13 +661,13 @@ void main(){
         }else if(input==3){
             exclui_tarefa();
         }else if(input==4){
-            printf("Selecione uma das consultas para realizar (digite o número da ação):\n1 -> Consultar todas tarefas\n2 -> Consultar tarefas ordenadas\n3 -> Consultar tarefas filtradas\n9 -> Voltar\n");
+            printf("\nSelecione uma das consultas para realizar (digite o número da ação):\n1 -> Consultar todas tarefas\n2 -> Consultar tarefas ordenadas\n3 -> Consultar tarefas filtradas\n9 -> Voltar\n");
             scanf("%d", &input);
             while ((getchar()) != '\n');
             if(input==1){
                 consulta_tarefas();
             }else if(input==2){
-                printf("Selecione o que você quer ordenar (digite o número da ação):\n1 -> Data (ordem crescente)\n2 -> Data (ordem decrescente)\n3 -> Prioridade (crescente)\n4 -> Prioridade (decrescente)\n9 -> Voltar\n");
+                printf("\nSelecione o que você quer ordenar (digite o número da ação):\n1 -> Data (ordem crescente)\n2 -> Data (ordem decrescente)\n3 -> Prioridade (crescente)\n4 -> Prioridade (decrescente)\n9 -> Voltar\n");
                 scanf("%d", &input);
                 while ((getchar()) != '\n');
                 if(input==1){
@@ -690,4 +693,6 @@ void main(){
             }
         }
     }
+
+    printf("\nAté a próxima!!\n\n");
 }
