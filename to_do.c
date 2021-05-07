@@ -1,4 +1,4 @@
-//STABLE 1.3
+//STABLE 1.4
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -80,13 +80,13 @@ void edita_tarefa(){
         }
         else{
             struct tarefa *edit = cria_tarefa();
-            fprintf(stderr, " PONTO 1 ");
+            //fprintf(stderr, " PONTO 1 ");
             edit->id = task.id;
-            fprintf(stderr, " PONTO 2 ");
+            //fprintf(stderr, " PONTO 2 ");
             fwrite(edit, sizeof(struct tarefa), 1, bin_ptr_temp);
-            fprintf(stderr, " PONTO 3 ");
+            //fprintf(stderr, " PONTO 3 ");
             free(edit);
-            fprintf(stderr, " PONTO 4 ");
+            //fprintf(stderr, " PONTO 4 ");
         }
     }
 
