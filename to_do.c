@@ -1,5 +1,5 @@
 
-/*----------------------------------------------------------- STABLE 1.47 ---------------------------------------------------------------------------*/
+/*----------------------------------------------------------- STABLE 1.48 ---------------------------------------------------------------------------*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -368,7 +368,7 @@ int consulta_tarefas(){
     char indicador;
 
 
-
+    bool imprimiu = false;
     if(bin_ptr == NULL){
         printf("\nErro ao consultar, não existe nenhuma tarefa!!\n");
         return 0;
@@ -380,10 +380,16 @@ int consulta_tarefas(){
             printf("- Descrição: %s\n", tarefa->descricao);
             printf("- Prioridade: %d\n\n", tarefa->prioridade);
             printf("- Data: %02d/%02d/%d\n\n", tarefa->dia, tarefa->mes, tarefa->ano);
+            imprimiu =true;
         }
 
-    printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
-    fclose(bin_ptr);
+        if(!imprimiu){
+            printf("\nErro ao consultar, não existe nenhuma tarefa!!\n");
+            return 0;
+        }
+
+        printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        fclose(bin_ptr);
     }
 
     return 1;
@@ -404,7 +410,11 @@ int consulta_ordenada(int params, int ordem){
     fseek(bin_ptr, 0L, SEEK_END);
     long num_de_tarefas = ftell(bin_ptr);
     num_de_tarefas = num_de_tarefas/sizeof(struct tarefa);
-    fclose(bin_ptr);
+
+    if(num_de_tarefas == 0){
+        printf("\nErro ao consultar, não existe nenhuma tarefa!!\n");
+        return 0;
+    }
 
     struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(struct tarefa));
     long **tarefa_ptr = (long **) malloc(sizeof(long *)*num_de_tarefas);
