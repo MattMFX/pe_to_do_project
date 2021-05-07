@@ -69,6 +69,8 @@ int exclui_tarefa(){
     fclose(bin_ptr);
     fclose(bin_ptr_temp);
     remove("tarefas_deprecated.bin");
+
+    printf("\nTarefa excluida com sucesso!!\n");
 }
 
 
@@ -105,6 +107,8 @@ int edita_tarefa(){
     fclose(bin_ptr_temp);
     remove("tarefas.bin");
     rename("tarefas_temp.bin", "tarefas.bin");
+
+    printf("\nTarefa editada com sucesso!!\n");
 }
 
 
