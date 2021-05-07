@@ -100,48 +100,59 @@ long int seleciona_tarefa(){
     consulta_tarefas();
     printf("\n\nDigite o ID da tarefa: ");
     scanf("%ld", &id);
-    return id;
+    fflush(stdin);
+    return id-1;
 }
 
 
 
 void exclui_tarefa(){
     long id = seleciona_tarefa();
-    int position = id*424;
-    long nextid = (id + 1)*424;
 
-    FILE *bin_ptr = fopen("tarefas.bin", "rb+");
-    fread(&id, sizeof(bin_ptr), 1, bin_ptr);
+    FILE *bin_ptr_temp = fopen("tarefas_temp.bin", "wb+");
+    FILE *bin_ptr = fopen("tarefas.bin", "rb");
 
-    while(position != nextid){
-        fseek(bin_ptr, position, SEEK_SET);
-        fwrite(fseek(bin_ptr, position+424, SEEK_SET), 1, 1, bin_ptr);
-        position++;
-    }
-
-    if(id != NULL){
-        exclui_tarefa(id+1);
+    struct tarefa task;
+    while(fread(&task, sizeof(struct tarefa), 1, bin_ptr)){
+        if(task.id!=id){
+            fwrite(&task, sizeof(struct tarefa), 1, bin_ptr_temp);
+        }
     }
 
     fclose(bin_ptr);
+    fclose(bin_ptr_temp);
+    remove("tarefas.bin");
+    rename("tarefas_temp.bin", "tarefas.bin");
 }
 
 
 void edita_tarefa(){
     long id = seleciona_tarefa();
-    int position = id*424;
-    long nextid = (id + 1)*424;
 
-    FILE *bin_ptr = fopen("tarefas.bin", "rb+");
-    fread(&id, sizeof(bin_ptr), 1, bin_ptr);
+    FILE *bin_ptr_temp = fopen("tarefas_temp.bin", "wb+");
+    FILE *bin_ptr = fopen("tarefas.bin", "rb");
 
-    struct tarefa *tarefa = cria_tarefa();
-    fseek(bin_ptr, 0L, SEEK_END);
-    long tamanho_arquivo = ftell(bin_ptr);
-    tarefa->id = tamanho_arquivo/sizeof(struct tarefa);
-    fwrite(tarefa, sizeof(*tarefa), 1, bin_ptr);
+    struct tarefa task;
+    while(fread(&task, sizeof(struct tarefa), 1, bin_ptr)){
+        if(task.id!=id){
+            fwrite(&task, sizeof(struct tarefa), 1, bin_ptr_temp);
+        }
+        else{
+            struct tarefa *edit = cria_tarefa();
+            fprintf(stderr, " PONTO 1 ");
+            edit->id = task.id;
+            fprintf(stderr, " PONTO 2 ");
+            fwrite(edit, sizeof(struct tarefa), 1, bin_ptr_temp);
+            fprintf(stderr, " PONTO 3 ");
+            free(edit);
+            fprintf(stderr, " PONTO 4 ");
+        }
+    }
+
     fclose(bin_ptr);
-    free(tarefa);
+    fclose(bin_ptr_temp);
+    remove("tarefas.bin");
+    rename("tarefas_temp.bin", "tarefas.bin");
 }
 
 
