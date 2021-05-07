@@ -15,6 +15,15 @@ struct tarefa{
     char categoria[200];
 };
 
+void salva_tarefa(struct tarefa *tarefa);
+
+
+
+
+
+
+
+
 
 
 /*---------------------------------------- I/O Usuário ----------------------------------------*/
@@ -94,6 +103,11 @@ struct tarefa * cria_tarefa(){
 
 
 
+
+
+
+
+
 /*---------------------------------------- I/O Binário ----------------------------------------*/
 long int seleciona_tarefa(){
     long id;
@@ -109,20 +123,21 @@ long int seleciona_tarefa(){
 void exclui_tarefa(){
     long id = seleciona_tarefa();
 
-    FILE *bin_ptr_temp = fopen("tarefas_temp.bin", "wb+");
-    FILE *bin_ptr = fopen("tarefas.bin", "rb");
+    rename("tarefas.bin", "tarefas_deprecated.bin");
+
+    FILE *bin_ptr_temp = fopen("tarefas.bin", "wb+");
+    FILE *bin_ptr = fopen("tarefas_deprecated.bin", "rb");
 
     struct tarefa task;
     while(fread(&task, sizeof(struct tarefa), 1, bin_ptr)){
         if(task.id!=id){
-            fwrite(&task, sizeof(struct tarefa), 1, bin_ptr_temp);
+            salva_tarefa(&task);
         }
     }
 
     fclose(bin_ptr);
     fclose(bin_ptr_temp);
-    remove("tarefas.bin");
-    rename("tarefas_temp.bin", "tarefas.bin");
+    remove("tarefas_deprecated.bin");
 }
 
 
@@ -271,6 +286,10 @@ void main(){
             exclui_tarefa();
         }else if(input==4){
             consulta_tarefas();
+        }else if(input==7){
+            exclui_tarefa();
+        }else if(input==8){
+            edita_tarefa();
         }
     }
 }
