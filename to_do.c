@@ -122,29 +122,42 @@ struct tarefa * cria_tarefa(){
     char buffer[100];
     int ind;
 
-    printf("Digite a categoria de seu compromisso (apenas os 200 primeiros caracteres serão salvos):\n");
-    fgets(tarefa->categoria, 1000, stdin);
-    fflush(stdin);
-
-    if(strlen(tarefa->categoria) > 200){
-        do{
-            printf("PUTS! Você gosta de escrever, hein... sua categoria deve ser menor!:(\nDigite uma nova categoria:\n");
-            fgets(tarefa->categoria, 600, stdin);
-            fflush(stdin);
-        }while(strlen(tarefa->categoria) > 200);
+    printf("Digite a categoria de seu compromisso (apenas os 190 primeiros caracteres serão salvos):\n");
+    fgets(tarefa->categoria, 200, stdin);
+    if(strlen(tarefa->categoria) >190){
+        while ((getchar()) != '\n');
+        fflush(stdin);
     }
 
 
-    printf("Digite a descrição de seu compromisso:\n");
-    fgets(tarefa->descricao, 1000, stdin);
-    fflush(stdin);
+    if(strlen(tarefa->categoria) > 190){
+        do{
+            printf("PUTS! Você gosta de escrever, hein... sua categoria deve ser menor!:(\nDigite uma nova categoria:\n");
+            fgets(tarefa->categoria, 200, stdin);
+            if(strlen(tarefa->categoria) >190){
+                while ((getchar()) != '\n');
+                fflush(stdin);
+            }
+        }while(strlen(tarefa->categoria) > 190);
+    }
 
-   if(strlen(tarefa->descricao) > 200){
+
+    printf("Digite a descrição de seu compromisso (apenas os 190 primeiros caracteres serão salvos):\n");
+    fgets(tarefa->descricao, 200, stdin);
+    if(strlen(tarefa->descricao) >190){
+        while ((getchar()) != '\n');
+        fflush(stdin);
+    }
+
+   if(strlen(tarefa->descricao) > 190){
         do{
             printf("PUTS! Você gosta de escrever, hein... sua descrição deve ser menor!:(\nDigite uma nova descrição:\n");
-            fgets(tarefa->descricao, 1000, stdin);
-            fflush(stdin);
-        }while(strlen(tarefa->descricao) > 200);
+            fgets(tarefa->descricao, 200, stdin);
+            if(strlen(tarefa->descricao) >190){
+                while ((getchar()) != '\n');
+                fflush(stdin);
+            }
+        }while(strlen(tarefa->descricao) > 190);
     }
 
 
