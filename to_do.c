@@ -17,8 +17,10 @@ struct tarefa{
     char categoria[200];
 };
 
-void salva_tarefa();
+void salva_tarefa(struct tarefa *tarefa);
 struct tarefa * cria_tarefa();
+void consulta_tarefas();
+int valida_inteiro(char *entrada);
 
 
 
@@ -30,11 +32,14 @@ struct tarefa * cria_tarefa();
 long int seleciona_tarefa(){
     long id;
     consulta_tarefas();
-    printf("\n\nDigite o ID da tarefa: ");
+    printf("\n\nDigite o ID da tarefa (número que aparece acima): ");
     scanf("%ld", &id);
+    while ((getchar()) != '\n');
     fflush(stdin);
     return id-1;
 }
+
+
 
 
 
@@ -57,6 +62,9 @@ void exclui_tarefa(){
     fclose(bin_ptr_temp);
     remove("tarefas_deprecated.bin");
 }
+
+
+
 
 
 void edita_tarefa(){
@@ -98,7 +106,7 @@ void salva_tarefa(struct tarefa *tarefa){
     bin_ptr = fopen("tarefas.bin", "ab");
 
     if(bin_ptr == NULL){
-        printf("Erro ao salvar as mudan�as, tente novamente");
+        printf("Erro ao salvar as mudanças, tente novamente");
     }else{
         fseek(bin_ptr, 0L, SEEK_END);
         long tamanho_arquivo = ftell(bin_ptr);
@@ -131,6 +139,10 @@ char * remove_espacos(char * saida, char * entrada){
     return saida;
 }
 
+
+
+
+
 int compara_string(char * primeira, char * segunda){
     int i=0;
     int ind=0;
@@ -150,30 +162,6 @@ int compara_string(char * primeira, char * segunda){
 }
 /*---------------------------------------------------------------------------------------------*/
 
-
-
-
-
-
-
-
-
-
-/*---------------------------------------- Validações -----------------------------------------*/
-int valida_inteiro(char *entrada){
-    int i;
-    int verif;
-    int retorno = 0;
-    for(i = 0; i < strlen(entrada); i++){
-        if(entrada[i] >= '0' && entrada[i] <='9'){
-            verif = entrada[i] - '0';
-        }else{
-            retorno = 1;
-        }
-    }
-    return retorno;
-}
-/*---------------------------------------------------------------------------------------------*/
 
 
 
@@ -209,7 +197,6 @@ struct tarefa * cria_tarefa(){
         }while(strlen(tarefa->categoria) > 190);
     }
 
-
     printf("Digite a descrição de seu compromisso (apenas os 190 primeiros caracteres serão salvos):\n");
     fgets(tarefa->descricao, 200, stdin);
     if(strlen(tarefa->descricao) >190){
@@ -231,14 +218,16 @@ struct tarefa * cria_tarefa(){
 
     printf("Digite um número de 1 a 5 relacionado a prioridade (1 --> Urgente / 5 --> Baixa Import�ncia)\n");
     scanf("%s", buffer);
+    while ((getchar()) != '\n');
     fflush(stdin);
     ind = valida_inteiro(buffer);
     tarefa->prioridade = atoi(buffer);
 
     if ((ind == 1)||(tarefa->prioridade<1 || tarefa->prioridade>5)){
         do{
-            printf("PUTS! Parece que sua entrada n�o � v�lida para essa categoria! :(\nVocê deve digitar um número de 1 a 5! :)\n");
+            printf("PUTS! Parece que sua entrada não é válida para essa categoria! :(\nVocê deve digitar um número de 1 a 5! :)\n");
             scanf("%s", buffer);
+            while ((getchar()) != '\n');
             fflush(stdin);
             ind = valida_inteiro(buffer);
             tarefa->prioridade = atoi(buffer);
@@ -248,6 +237,7 @@ struct tarefa * cria_tarefa(){
 //Recebe Data
     printf("Digite a data do compromisso com o seguinte formato: dd/mm/aaaa\n");
     scanf("%s", buffer);
+    while ((getchar()) != '\n');
     fflush(stdin);
 
     tarefa->dia = atoi(buffer);
@@ -258,6 +248,7 @@ struct tarefa * cria_tarefa(){
         do{
             printf("PUTS! Parece que sua entrada não é válida para essa categoria! :(\nVocê deve digitar uma data existente com o seguinte formato: dd/mm/aaaa! :)\n");
             scanf("%s", buffer);
+            while ((getchar()) != '\n');
             fflush(stdin);
             tarefa->dia = atoi(buffer);
             tarefa->mes = atoi(buffer+3);
@@ -331,6 +322,10 @@ int particiona(long **tarefa_ptr, int comeco, int fim){
     
     return pivot;
 }
+
+
+
+
 
 void quicksort(long **tarefa_ptr, int comeco, int fim){
     int pivot =0;
@@ -428,6 +423,7 @@ void consulta_ordenada(int params, int ordem){
             fseek(bin_ptr2, (tarefa_ptr[i][0]*sizeof(struct tarefa)), SEEK_SET);
             fread(tarefa, sizeof(*tarefa), 1, bin_ptr2);
             printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
+            printf("---> %ld\n\n", tarefa->id+1);
             printf("- Categoria: %s\n", tarefa->categoria);
             printf("- Descrição: %s\n", tarefa->descricao);
             printf("- Prioridade: %d\n\n", tarefa->prioridade);
@@ -483,6 +479,7 @@ void consulta_prioridade(){
         while(fread(tarefa, sizeof(*tarefa), 1, bin_ptr) != 0){
             if (entrada == tarefa->prioridade){
                 printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
+                printf("---> %ld\n\n", tarefa->id+1);
                 printf("- Categoria: %s\n", tarefa->categoria);
                 printf("- Descrição: %s\n", tarefa->descricao);
                 printf("- Prioridade: %d\n\n", tarefa->prioridade);
@@ -552,6 +549,7 @@ void consulta_data(){
         while(fread(tarefa, sizeof(*tarefa), 1, bin_ptr) != 0){
             if ((entrada_dia == tarefa->dia)&&(entrada_mes == tarefa->mes)&&(entrada_ano == tarefa->ano)){
                 printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
+                printf("---> %ld\n\n", tarefa->id+1);
                 printf("- Categoria: %s\n", tarefa->categoria);
                 printf("- Descrição: %s\n", tarefa->descricao);
                 printf("- Prioridade: %d\n\n", tarefa->prioridade);
@@ -606,6 +604,7 @@ void consulta_categoria(){
         while(fread(tarefa, sizeof(*tarefa), 1, bin_ptr) != 0){
             if (compara_string(entrada,tarefa->categoria)==0){
                 printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
+                printf("---> %ld\n\n", tarefa->id+1);
                 printf("- Categoria: %s\n", tarefa->categoria);
                 printf("- Descrição: %s\n", tarefa->descricao);
                 printf("- Prioridade: %d\n\n", tarefa->prioridade);
