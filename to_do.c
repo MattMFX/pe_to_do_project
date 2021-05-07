@@ -17,7 +17,8 @@ struct tarefa{
     char categoria[200];
 };
 
-
+void salva_tarefa();
+struct tarefa * cria_tarefa();
 
 
 
@@ -26,17 +27,67 @@ struct tarefa{
 
 
 /*---------------------------------------- I/O Binário ----------------------------------------*/
-void exclui_tarefa(){
-
+long int seleciona_tarefa(){
+    long id;
+    consulta_tarefas();
+    printf("\n\nDigite o ID da tarefa: ");
+    scanf("%ld", &id);
+    fflush(stdin);
+    return id-1;
 }
 
 
 
+void exclui_tarefa(){
+    long id = seleciona_tarefa();
+
+    rename("tarefas.bin", "tarefas_deprecated.bin");
+
+    FILE *bin_ptr_temp = fopen("tarefas.bin", "wb+");
+    FILE *bin_ptr = fopen("tarefas_deprecated.bin", "rb");
+
+    struct tarefa task;
+    while(fread(&task, sizeof(struct tarefa), 1, bin_ptr)){
+        if(task.id!=id){
+            salva_tarefa(&task);
+        }
+    }
+
+    fclose(bin_ptr);
+    fclose(bin_ptr_temp);
+    remove("tarefas_deprecated.bin");
+}
 
 
 void edita_tarefa(){
+    long id = seleciona_tarefa();
 
+    FILE *bin_ptr_temp = fopen("tarefas_temp.bin", "wb+");
+    FILE *bin_ptr = fopen("tarefas.bin", "rb");
+
+    struct tarefa task;
+    while(fread(&task, sizeof(struct tarefa), 1, bin_ptr)){
+        if(task.id!=id){
+            fwrite(&task, sizeof(struct tarefa), 1, bin_ptr_temp);
+        }
+        else{
+            struct tarefa *edit = cria_tarefa();
+            fprintf(stderr, " PONTO 1 ");
+            edit->id = task.id;
+            fprintf(stderr, " PONTO 2 ");
+            fwrite(edit, sizeof(struct tarefa), 1, bin_ptr_temp);
+            fprintf(stderr, " PONTO 3 ");
+            free(edit);
+            fprintf(stderr, " PONTO 4 ");
+        }
+    }
+
+    fclose(bin_ptr);
+    fclose(bin_ptr_temp);
+    remove("tarefas.bin");
+    rename("tarefas_temp.bin", "tarefas.bin");
 }
+
 
 
 
@@ -221,6 +272,28 @@ struct tarefa * cria_tarefa(){
 
 
 
+
+
+
+
+
+
+
+/*---------------------------------------- Validações -----------------------------------------*/
+int valida_inteiro(char *entrada){
+    int i;
+    int verif;
+    int retorno = 0;
+    for(i = 0; i < strlen(entrada); i++){
+        if(entrada[i] >= '0' && entrada[i] <='9'){
+            verif = entrada[i] - '0';
+        }else{
+            retorno = 1;
+        }
+    }
+    return retorno;
+}
+/*---------------------------------------------------------------------------------------------*/
 
 
 
