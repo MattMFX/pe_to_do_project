@@ -5,6 +5,7 @@
 #include <string.h>
 #include <time.h>
 #include <stdbool.h>
+#include <ctype.h>
 
 struct tarefa{
     long id;
@@ -66,6 +67,47 @@ void salva_tarefa(struct tarefa *tarefa){
 
 
 
+/*---------------------------------------- Comparações de String -------------------------------*/
+char * remove_espacos(char * saida, char * entrada){
+    int k=0;
+    int i=0;
+    for (i=0; i <= strlen(entrada) ; i++){
+        if(!isspace(entrada[i])){
+            saida[k++]=entrada[i];
+        }
+    }
+    saida[k]=0;
+    return saida;
+}
+
+int compara_string(char * primeira, char * segunda){
+    int i=0;
+    int ind=0;
+
+    char primeira_limpa [200] = {0};
+    char segunda_limpa [200] = {0};
+
+    remove_espacos(primeira_limpa, primeira);
+    remove_espacos(segunda_limpa, segunda);
+
+    for (i=0; i <= strlen(primeira_limpa) ; i++){
+        if((tolower(primeira_limpa[i])) != (tolower(segunda_limpa[i]))){
+            ind=1;
+        }
+    }
+    return ind;
+}
+/*---------------------------------------------------------------------------------------------*/
+
+
+
+
+
+
+
+
+
+
 /*---------------------------------------- Validações -----------------------------------------*/
 int valida_inteiro(char *entrada){
     int i;
@@ -97,29 +139,42 @@ struct tarefa * cria_tarefa(){
     char buffer[100];
     int ind;
 
-    printf("Digite a categoria de seu compromisso (apenas os 200 primeiros caracteres serão salvos):\n");
-    fgets(tarefa->categoria, 1000, stdin);
-    fflush(stdin);
-
-    if(strlen(tarefa->categoria) > 200){
-        do{
-            printf("PUTS! Você gosta de escrever, hein... sua categoria deve ser menor!:(\nDigite uma nova categoria:\n");
-            fgets(tarefa->categoria, 600, stdin);
-            fflush(stdin);
-        }while(strlen(tarefa->categoria) > 200);
+    printf("Digite a categoria de seu compromisso (apenas os 190 primeiros caracteres serão salvos):\n");
+    fgets(tarefa->categoria, 200, stdin);
+    if(strlen(tarefa->categoria) >190){
+        while ((getchar()) != '\n');
+        fflush(stdin);
     }
 
 
-    printf("Digite a descrição de seu compromisso:\n");
-    fgets(tarefa->descricao, 1000, stdin);
-    fflush(stdin);
+    if(strlen(tarefa->categoria) > 190){
+        do{
+            printf("PUTS! Você gosta de escrever, hein... sua categoria deve ser menor!:(\nDigite uma nova categoria:\n");
+            fgets(tarefa->categoria, 200, stdin);
+            if(strlen(tarefa->categoria) >190){
+                while ((getchar()) != '\n');
+                fflush(stdin);
+            }
+        }while(strlen(tarefa->categoria) > 190);
+    }
 
-   if(strlen(tarefa->descricao) > 200){
+
+    printf("Digite a descrição de seu compromisso (apenas os 190 primeiros caracteres serão salvos):\n");
+    fgets(tarefa->descricao, 200, stdin);
+    if(strlen(tarefa->descricao) >190){
+        while ((getchar()) != '\n');
+        fflush(stdin);
+    }
+
+   if(strlen(tarefa->descricao) > 190){
         do{
             printf("PUTS! Você gosta de escrever, hein... sua descrição deve ser menor!:(\nDigite uma nova descrição:\n");
-            fgets(tarefa->descricao, 1000, stdin);
-            fflush(stdin);
-        }while(strlen(tarefa->descricao) > 200);
+            fgets(tarefa->descricao, 200, stdin);
+            if(strlen(tarefa->descricao) >190){
+                while ((getchar()) != '\n');
+                fflush(stdin);
+            }
+        }while(strlen(tarefa->descricao) > 190);
     }
 
 
@@ -233,7 +288,7 @@ void consulta_tarefas(){
     struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(struct tarefa));
     char indicador;
 
-    //Se o fopen retornar nulo, o arquivo n�o existe
+
 
     if(bin_ptr == NULL){
         printf("Erro ao abrir, não existe nenhuma tarefa!!\n");
@@ -319,7 +374,192 @@ void consulta_ordenada(int params, int ordem){
         fclose(bin_ptr2);
     }
 }
+
+
+
+
+
+void consulta_prioridade(){
+
+    FILE *bin_ptr = fopen("tarefas.bin", "rb");
+    struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(struct tarefa));
+    char buffer[100];
+    int ind;
+    int entrada;
+    int cont=0;
+
+    printf("Digite a prioridade da(s) tarefa(s) que você deseja pesquisar (1 --> Urgente / 5 --> Baixa Import�ncia):\n");
+    scanf("%s", buffer);
+    fflush(stdin);
+    ind = valida_inteiro(buffer);
+    entrada = atoi(buffer);
+    if ((ind == 1)||(entrada<1 || entrada>5)){
+        do{
+            printf("PUTS! Parece que essa prioridade não é válida...! :(\nVocê deve digitar um número de 1 a 5! :)\n");
+            scanf("%s", buffer);
+            fflush(stdin);
+            ind = valida_inteiro(buffer);
+            entrada = atoi(buffer);
+        }while ((ind == 1)||(entrada<1 || entrada>5));
+    }
+
+    printf("Seu resultado da busca:\n");
+    if(bin_ptr == NULL){
+        printf("Erro ao abrir, não existe nenhuma tarefa!!\n");
+    }else{
+        while(fread(tarefa, sizeof(*tarefa), 1, bin_ptr) != 0){
+            if (entrada == tarefa->prioridade){
+                printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
+                printf("- Categoria: %s\n", tarefa->categoria);
+                printf("- Descrição: %s\n", tarefa->descricao);
+                printf("- Prioridade: %d\n\n", tarefa->prioridade);
+                printf("- Data: %02d/%02d/%d\n\n", tarefa->dia, tarefa->mes, tarefa->ano);
+                cont++;
+            }
+        }
+
+    printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    if(cont == 0){
+        printf("Parece que sua busca não obteve resultados, amigão... :(\n");
+        printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    }
+    else if(cont==1){
+        printf("Sua  busca obteve 1 único resultado!\n");
+        printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    }
+    else{
+        printf("Sua busca obteve %d resultados!\n", cont);
+        printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    }
+
+    fclose(bin_ptr);
+    }
+}
+
+
+
+
+
+void consulta_data(){
+
+    FILE *bin_ptr = fopen("tarefas.bin", "rb");
+    struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(struct tarefa));
+    char indicador;
+    char buffer[100];
+    int ind;
+    int entrada_dia;
+    int entrada_mes;
+    int entrada_ano;
+    int cont=0;
+
+    printf("Digite a data da(s) tarefa(s) que você deseja pesquisar (no formato dd/mm/aaaa):\n");
+    scanf("%s", buffer);
+    fflush(stdin);
+
+    entrada_dia = atoi(buffer);
+    entrada_mes = atoi(buffer+3);
+    entrada_ano = atoi(buffer+6);
+
+    if ((entrada_dia<1 ||entrada_dia>31)  || (entrada_mes<1 || entrada_mes>12)  || (entrada_ano<1)){
+        do{
+            printf("PUTS! Parece que essa data não é válida...! :(\nVocê deve digitar uma data no formato dd/mm/aaaa! :)\n");
+            scanf("%s", buffer);
+            fflush(stdin);
+            ind = valida_inteiro(buffer);
+            entrada_dia = atoi(buffer);
+            entrada_mes = atoi(buffer+3);
+            entrada_ano = atoi(buffer+6);
+        }while ((entrada_dia<1 ||entrada_dia>31)  || (entrada_mes<1 || entrada_mes>12)  || (entrada_ano<1));
+    }
+
+    printf("Seu resultado da busca:\n");
+    if(bin_ptr == NULL){
+        printf("Erro ao abrir, não existe nenhuma tarefa!!\n");
+    }else{
+        while(fread(tarefa, sizeof(*tarefa), 1, bin_ptr) != 0){
+            if ((entrada_dia == tarefa->dia)&&(entrada_mes == tarefa->mes)&&(entrada_ano == tarefa->ano)){
+                printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
+                printf("- Categoria: %s\n", tarefa->categoria);
+                printf("- Descrição: %s\n", tarefa->descricao);
+                printf("- Prioridade: %d\n\n", tarefa->prioridade);
+                printf("- Data: %02d/%02d/%d\n\n", tarefa->dia, tarefa->mes, tarefa->ano);
+                cont++;
+            }
+        }
+
+    printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    if(cont == 0){
+        printf("Parece que sua busca não obteve resultados, amigão... :(\n");
+        printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    }
+    else if(cont==1){
+        printf("Sua  busca obteve 1 único resultado!\n");
+        printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    }
+    else{
+        printf("Sua busca obteve %d resultados!\n", cont);
+        printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    }
+
+    fclose(bin_ptr);
+    }
+}
+
+
+
+
+
+void consulta_categoria(){
+
+    FILE *bin_ptr = fopen("tarefas.bin", "rb");
+    struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(struct tarefa));
+    char indicador;
+    char entrada[200];
+    int cont=0;
+
+
+    printf("Digite a categoria da(s) tarefa(s) que você deseja pesquisar:\n");
+    fgets(entrada, 200, stdin);
+    if(strlen(entrada) >190){
+        while ((getchar()) != '\n');
+        fflush(stdin);
+    }
+
+
+    printf("Seu resultado da busca:\n");
+    if(bin_ptr == NULL){
+        printf("Erro ao abrir, não existe nenhuma tarefa!!\n");
+    }else{
+        while(fread(tarefa, sizeof(*tarefa), 1, bin_ptr) != 0){
+            if (compara_string(entrada,tarefa->categoria)==0){
+                printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
+                printf("- Categoria: %s\n", tarefa->categoria);
+                printf("- Descrição: %s\n", tarefa->descricao);
+                printf("- Prioridade: %d\n\n", tarefa->prioridade);
+                printf("- Data: %02d/%02d/%d\n\n", tarefa->dia, tarefa->mes, tarefa->ano);
+                cont++;
+            }
+        }
+
+    printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    if(cont == 0){
+        printf("Parece que sua busca não obteve resultados, amigão... :(\n");
+        printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    }
+    else if(cont==1){
+        printf("Sua  busca obteve 1 único resultado!\n");
+        printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    }
+    else{
+        printf("Sua busca obteve %d resultados!\n", cont);
+        printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    }
+
+    fclose(bin_ptr);
+    }
+}
 /*--------------------------------------------------------------------------------------------*/
+
 
 
 
@@ -365,9 +605,16 @@ void main(){
                     consulta_ordenada(1, 1);
                 }
             }else if(input==3){
-                
-            }else if(input==4){
-                main();
+                printf("Selecione o filtro das tarefas que você quer encontrar (digite o número da ação):\n1 -> Por data\n2 -> Por prioridade\n3 -> Por categoria\n4 -> Voltar\n");
+                scanf("%d", &input);
+                while ((getchar()) != '\n');
+                if(input==1){
+                    consulta_data();
+                }else if(input==2){
+                    consulta_prioridade();
+                }else if(input==3){
+                    consulta_categoria();
+                }
             }
         }
     }
