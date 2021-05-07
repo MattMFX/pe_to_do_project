@@ -1,5 +1,5 @@
 
-/*----------------------------------------------------------- STABLE 1.49 ---------------------------------------------------------------------------*/
+/*----------------------------------------------------------- STABLE 1.5 ---------------------------------------------------------------------------*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -405,7 +405,8 @@ int consulta_tarefas(){
 
 int consulta_ordenada(int params, int ordem){
     FILE *bin_ptr;
-    bin_ptr = fopen("tarefas.bin", "rb");
+    bin_ptr = fopen("tarefas.bin", "ab");
+
     if(bin_ptr == NULL){
         printf("\nErro ao consultar, não existe nenhuma tarefa!!\n");
         return 0;
@@ -420,12 +421,17 @@ int consulta_ordenada(int params, int ordem){
         return 0;
     }
 
+    fclose(bin_ptr);
+
+    FILE *bin_ptr2;
+    bin_ptr2 = fopen("tarefas.bin", "rb");
+
     struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(struct tarefa));
     long **tarefa_ptr = (long **) malloc(sizeof(long *)*num_de_tarefas);
 
     int cont=0;
     while(cont<(int) num_de_tarefas){
-        fread(tarefa, sizeof(struct tarefa), 1, bin_ptr);
+        fread(tarefa, sizeof(struct tarefa), 1, bin_ptr2);
         long *tarefa_id = (long *) malloc(sizeof(long)*2);
         tarefa_id[0] = tarefa->id;
         if(params==0){
@@ -448,8 +454,8 @@ int consulta_ordenada(int params, int ordem){
     }
 
     while(!iterou){
-        fseek(bin_ptr, (tarefa_ptr[i][0]*sizeof(struct tarefa)), SEEK_SET);
-        fread(tarefa, sizeof(*tarefa), 1, bin_ptr);
+        fseek(bin_ptr2, (tarefa_ptr[i][0]*sizeof(struct tarefa)), SEEK_SET);
+        fread(tarefa, sizeof(*tarefa), 1, bin_ptr2);
         printf("\n-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
         printf("---> %ld\n\n", tarefa->id+1);
         printf("- Categoria: %s\n", tarefa->categoria);
@@ -468,7 +474,7 @@ int consulta_ordenada(int params, int ordem){
     }
 
     printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
-    fclose(bin_ptr);
+    fclose(bin_ptr2);
 }
 
 
