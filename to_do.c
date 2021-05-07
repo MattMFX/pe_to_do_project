@@ -1,4 +1,4 @@
-//STABLE 1.41
+//STABLE 1.42
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -382,7 +382,7 @@ void consulta_tarefas(){
 void consulta_ordenada(int params, int ordem){
     FILE *bin_ptr;
     bin_ptr = fopen("tarefas.bin", "ab");
-    int num_de_tarefas = ftell(bin_ptr);
+    long num_de_tarefas = ftell(bin_ptr);
     num_de_tarefas = num_de_tarefas/sizeof(struct tarefa);
     fclose(bin_ptr);
 
@@ -396,7 +396,7 @@ void consulta_ordenada(int params, int ordem){
         printf("Erro ao abrir, não existe nenhuma tarefa!!\n");
     }else{
         int cont=0;
-        while(cont<num_de_tarefas){
+        while(cont<(int) num_de_tarefas){
             fread(tarefa, sizeof(struct tarefa), 1, bin_ptr2);
             long *tarefa_id = (long *) malloc(sizeof(long)*2);
             tarefa_id[0] = tarefa->id;
@@ -409,7 +409,7 @@ void consulta_ordenada(int params, int ordem){
             cont++;
         }
 
-        quicksort(tarefa_ptr, 0, num_de_tarefas-1);
+        quicksort(tarefa_ptr, 0, (int) (num_de_tarefas-1));
         
         bool iterou = false;
         int i;
