@@ -1,4 +1,4 @@
-//STABLE 1.4
+//STABLE 1.41
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -645,7 +645,6 @@ void consulta_categoria(){
 void main(){
 
     int input=0;
-    printf("%ld", sizeof(long));
     while(input!=5){
         printf("Selecione uma das ações para realizar (digite o número da ação):\n1 -> Inserir nova tarefa\n2 -> Editar uma tarefa\n3 -> Excluir uma tarefa\n4 -> Consultar tarefas\n5 -> Encerrar sessão\n");
         scanf("%d", &input);
