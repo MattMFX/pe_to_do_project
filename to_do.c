@@ -376,13 +376,16 @@ void consulta_categoria(){
     FILE *bin_ptr = fopen("tarefas.bin", "rb");
     struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(struct tarefa));
     char indicador;
-    char entrada[100];
+    char entrada[200];
     int cont=0;
 
 
     printf("Digite a categoria da(s) tarefa(s) que você deseja pesquisar:\n");
-    scanf("%s", entrada);
-    fflush(stdin);
+    fgets(entrada, 200, stdin);
+    if(strlen(entrada) >190){
+        while ((getchar()) != '\n');
+        fflush(stdin);
+    }
 
 
     printf("Seu resultado da busca:\n");
@@ -446,6 +449,5 @@ void main(){
         }else if(input==4){
             consulta_tarefas();
         }
-
     }
 }
