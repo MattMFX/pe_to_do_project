@@ -345,6 +345,29 @@ void main(){
         }else if(input==3){
             exclui_tarefa();
         }else if(input==4){
-            consulta_tarefas();
+            printf("Selecione uma das consultas para realizar (digite o número da ação):\n1 -> Consultar todas tarefas\n2 -> Consultar tarefas ordenadas\n3 ->  Consultar tarefas filtradas\n4 -> Voltar\n");
+            scanf("%d", &input);
+            while ((getchar()) != '\n');
+            if(input==1){
+                consulta_tarefas();
+            }else if(input==2){
+                printf("Selecione o que você quer ordenar (digite o número da ação):\n1 -> Data (ordem crescente)\n2 -> Data (ordem decrescente)\n3 ->  Prioridade (crescente)\n4 -> Prioridade (decrescente)\n5 -> Voltar");
+                scanf("%d", &input);
+                while ((getchar()) != '\n');
+                if(input==1){
+                    consulta_ordenada(0, 0);
+                }else if(input==2){
+                    consulta_ordenada(0, 1);
+                }else if(input==3){
+                    consulta_ordenada(1, 0);
+                }else if(input==4){
+                    consulta_ordenada(1, 1);
+                }
+            }else if(input==3){
+                
+            }else if(input==4){
+                main();
+            }
+        }
     }
 }
