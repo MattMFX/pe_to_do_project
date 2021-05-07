@@ -1,4 +1,4 @@
-//STABLE 1.43
+//STABLE 1.44
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -319,7 +319,7 @@ int particiona(long **tarefa_ptr, int comeco, int fim){
             l++;
         }
     }
-    
+
     return pivot;
 }
 
@@ -382,6 +382,7 @@ void consulta_tarefas(){
 void consulta_ordenada(int params, int ordem){
     FILE *bin_ptr;
     bin_ptr = fopen("tarefas.bin", "ab");
+    fseek(bin_ptr, 0L, SEEK_END);
     long num_de_tarefas = ftell(bin_ptr);
     num_de_tarefas = num_de_tarefas/sizeof(struct tarefa);
     fclose(bin_ptr);
@@ -391,7 +392,7 @@ void consulta_ordenada(int params, int ordem){
 
     struct tarefa *tarefa = (struct tarefa *) malloc(sizeof(struct tarefa));
     long **tarefa_ptr = (long **) malloc(sizeof(long *)*num_de_tarefas);
-    
+
     if(bin_ptr2 == NULL){
         printf("Erro ao abrir, não existe nenhuma tarefa!!\n");
     }else{
@@ -410,7 +411,7 @@ void consulta_ordenada(int params, int ordem){
         }
 
         quicksort(tarefa_ptr, 0, (int) (num_de_tarefas-1));
-        
+
         bool iterou = false;
         int i;
         if(ordem==0){
